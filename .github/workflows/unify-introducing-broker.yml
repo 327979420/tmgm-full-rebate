@@ -1,0 +1,77 @@
+name: Unify Introducing Broker terminology
+
+on:
+  push:
+    paths:
+      - .github/workflows/unify-introducing-broker.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update-terminology:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Replace agent terminology
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          # Rename translation keys so the source also uses IB terminology.
+          text = text.replace('applyAgent', 'applyIB')
+          text = text.replace('agentForm', 'ibForm')
+
+          # Chinese, Malay and Thai display terminology: always use the English industry term.
+          text = text.replace('代理', 'Introducing Broker')
+          text = text.replace('Ejen', 'Introducing Broker')
+          text = text.replace('ejen', 'Introducing Broker')
+          text = text.replace('ตัวแทน', 'Introducing Broker')
+
+          # English display terminology.
+          replacements = {
+              'AGENT APPLICATION': 'INTRODUCING BROKER APPLICATION',
+              'Agent Application': 'Introducing Broker Application',
+              'agent application': 'Introducing Broker application',
+              'Apply as agent': 'Apply as Introducing Broker',
+              'agent access': 'Introducing Broker eligibility',
+              'rebate or agent form': 'rebate or Introducing Broker form',
+              'rebate or agent application': 'rebate or Introducing Broker application',
+              'Rebate and agent setup tutorials': 'Rebate and Introducing Broker setup tutorials',
+              'Confirm the agent agreement': 'Confirm the Introducing Broker agreement',
+              'Agent application': 'Introducing Broker application',
+              'Agent / commission-focused': 'Introducing Broker / commission-focused',
+          }
+          for old, new in replacements.items():
+              text = text.replace(old, new)
+
+          # Final visible-text checks. Code keys have already been renamed.
+          forbidden = ['代理', 'Ejen', 'ejen', 'ตัวแทน']
+          for term in forbidden:
+              if term in text:
+                  raise SystemExit(f'Forbidden legacy term remains: {term}')
+          if re.search(r'\bagent\b', text, flags=re.I):
+              matches = sorted(set(re.findall(r'.{0,30}\bagent\b.{0,30}', text, flags=re.I)))
+              raise SystemExit('English legacy term remains: ' + repr(matches))
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit updated website
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No terminology changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Standardize Introducing Broker terminology"
+          git push
