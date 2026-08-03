@@ -102,4 +102,75 @@ body{background:var(--bg);line-height:1.55}
 if '/* professional-density-v1 */' not in text:
     text = text.replace('</style>', css + '</style>', 1)
 
+# Professional rebate table with row/column focus interaction.
+table_css = r'''
+/* rebate-table-pro-v1 */
+.table-wrap{position:relative;overflow:auto;border:1px solid #cbd6e3;border-radius:12px;background:#fff;box-shadow:0 8px 24px #061a440d}
+.policy{width:100%;min-width:900px;border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:13px;color:#21344d}
+.policy th,.policy td{height:62px;padding:10px 12px;border-right:1px solid #e1e7ef;border-bottom:1px solid #e1e7ef;text-align:center;vertical-align:middle;transition:background-color .14s ease,color .14s ease,box-shadow .14s ease}
+.policy tr>*:last-child{border-right:0}
+.policy tbody tr:last-child>*{border-bottom:0}
+.policy thead th{position:sticky;top:0;z-index:4;height:58px;background:#0b2f5f;color:#fff;font-size:13px;font-weight:700;letter-spacing:.01em;box-shadow:inset 0 -1px 0 #ffffff1f}
+.policy thead th:first-child{left:0;z-index:6;background:#08254b;text-align:left;padding-left:16px}
+.policy thead th small{display:block;margin-top:3px;color:#c7d7eb;font-size:10px;font-weight:500;line-height:1.25}
+.policy tbody th{position:sticky;left:0;z-index:3;width:128px;background:#eef3f8;color:#17365f;text-align:left;padding-left:16px;font-size:13px;font-weight:700}
+.policy tbody td{background:#fff}
+.policy tbody tr:nth-child(even) td{background:#f9fbfd}
+.policy tbody tr:last-child th,.policy tbody tr:last-child td{background:#f1f6fb;color:#244568}
+.policy .raw{background:#f5f8fb;font-weight:600}
+.policy thead th.raw{background:#174b78;color:#fff}
+.policy tbody tr:nth-child(even) td.raw{background:#f0f5f9}
+.cell-main{display:block;font-size:13px;font-weight:700;line-height:1.3;color:inherit}
+.cell-sub{display:block;margin-top:3px;font-size:11px;font-weight:500;line-height:1.25;color:#6a788a}
+.policy thead .cell-sub,.policy thead small{color:#c7d7eb}
+.policy .is-row,.policy .is-col{background:#eaf4fc!important;color:#163c68!important}
+.policy thead .is-col{background:#125186!important;color:#fff!important}
+.policy tbody th.is-row,.policy tbody th.is-col{background:#dceaf6!important;color:#123e6d!important}
+.policy .is-active{position:relative;z-index:7;background:#d5edf9!important;color:#082f5a!important;box-shadow:inset 0 0 0 2px #16a9ca}
+.policy thead .is-active{background:#0d6592!important;color:#fff!important;box-shadow:inset 0 0 0 2px #6fe3f2}
+.policy td:focus-visible,.policy th:focus-visible{outline:3px solid #16b8d766;outline-offset:-3px}
+@media(max-width:700px){
+  .policy{min-width:820px;font-size:12px}.policy th,.policy td{height:58px;padding:9px 10px}
+  .policy tbody th{width:112px;padding-left:12px}.cell-main{font-size:12px}.cell-sub{font-size:10px}
+}
+'''
+if '/* rebate-table-pro-v1 */' not in text:
+    text = text.replace('</style>', table_css + '</style>', 1)
+
+interaction_js = r'''
+function setupPolicyTableInteractions(){
+  const table=document.getElementById('policyTable');
+  if(!table)return;
+  const cells=[...table.querySelectorAll('th,td')];
+  cells.forEach(cell=>cell.setAttribute('tabindex','0'));
+  const clear=()=>table.querySelectorAll('.is-row,.is-col,.is-active').forEach(cell=>cell.classList.remove('is-row','is-col','is-active'));
+  const highlight=cell=>{
+    if(!cell||!cell.matches('th,td'))return;
+    clear();
+    const column=cell.cellIndex;
+    [...cell.parentElement.children].forEach(item=>item.classList.add('is-row'));
+    table.querySelectorAll('tr').forEach(row=>{const item=row.children[column];if(item)item.classList.add('is-col')});
+    cell.classList.add('is-active');
+  };
+  if(table.dataset.interactive==='true')return;
+  table.dataset.interactive='true';
+  table.addEventListener('pointerover',event=>highlight(event.target.closest('th,td')));
+  table.addEventListener('pointerleave',clear);
+  table.addEventListener('focusin',event=>highlight(event.target.closest('th,td')));
+  table.addEventListener('click',event=>highlight(event.target.closest('th,td')));
+}
+'''
+if 'function setupPolicyTableInteractions()' not in text:
+    anchor='function setLang(lang)'
+    if anchor not in text:
+        raise SystemExit('Table interaction insertion anchor not found')
+    text=text.replace(anchor,interaction_js+anchor,1)
+
+old_render="document.getElementById('policyTable').innerHTML=h}"
+new_render="document.getElementById('policyTable').innerHTML=h;setupPolicyTableInteractions()}"
+if old_render in text:
+    text=text.replace(old_render,new_render,1)
+elif new_render not in text:
+    raise SystemExit('Table render hook not found')
+
 path.write_text(text, encoding='utf-8')
