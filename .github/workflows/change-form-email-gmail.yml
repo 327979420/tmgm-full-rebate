@@ -1,0 +1,39 @@
+name: Change form receiver to Gmail
+
+on:
+  push:
+    paths:
+      - .github/workflows/change-form-email-gmail.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update-email:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update FormSubmit receiver
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          old = "const FORM_ENDPOINT='https://formsubmit.co/ajax/'+atob('ZnJlZGR5LmxpYW5nQHRtZ20uY29t');"
+          new = "const FORM_ENDPOINT='https://formsubmit.co/ajax/'+atob('Zjc3NDgzOTI0MUBnbWFpbC5jb20=');"
+
+          if old not in text:
+              raise SystemExit('Current form endpoint was not found')
+
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+
+      - name: Commit update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Route form submissions to Gmail"
+          git push
