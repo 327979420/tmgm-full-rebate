@@ -1,0 +1,92 @@
+name: Apply official logos and hide public email
+
+on:
+  push:
+    paths:
+      - .github/workflows/polish-official-logos.yml
+
+permissions:
+  contents: write
+
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Polish website
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          index = Path('index.html')
+          text = index.read_text(encoding='utf-8')
+
+          old_css = ".platforms{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.platform-card{position:relative;background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 12px 30px #061a440d;display:flex;flex-direction:column;min-height:280px}.platform-card.active{border:2px solid var(--cyan);box-shadow:0 18px 42px #0b3f9120}.platform-card.soon{background:#f7f9fc}.platform-status{position:absolute;right:16px;top:16px;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;background:#e9f9fc;color:#086c80}.platform-card.soon .platform-status{background:#eef1f5;color:#697386}.platform-logo{height:64px;display:flex;align-items:center;margin:22px 0 14px}.platform-logo img{max-width:190px;max-height:58px}.wordmark{font-size:29px;font-weight:950;letter-spacing:-1px}.wordmark.ec{color:#1f4730}.wordmark.ic{color:#1262a3}.wordmark.exness{color:#d69c00}.platform-card p{color:var(--muted);flex:1}.platform-actions{display:grid;gap:9px}.platform-card .btn{width:100%}"
+          new_css = ".platforms{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.platform-card{position:relative;background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 14px 34px #061a440d;display:flex;flex-direction:column;min-height:330px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}.platform-card:hover{transform:translateY(-4px);box-shadow:0 22px 48px #061a4418}.platform-card.active{border:2px solid var(--cyan);box-shadow:0 20px 48px #0b3f9120}.platform-card.soon{background:linear-gradient(180deg,#fbfcfe,#f4f7fb);border-color:#dfe5ee}.platform-status{position:absolute;right:15px;top:15px;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;background:#e9f9fc;color:#086c80}.platform-card.soon .platform-status{background:#edf1f6;color:#717b8c}.platform-logo{height:100px;display:flex;align-items:center;justify-content:center;margin:24px 0 18px;padding:16px;border-radius:16px;background:#fff;border:1px solid #e8edf4;overflow:hidden}.platform-logo img{display:block;width:100%;height:100%;max-width:225px;max-height:70px;object-fit:contain}.platform-logo.exness-panel{background:#061024;border-color:#061024}.platform-logo.exness-panel img{max-width:220px;max-height:58px}.platform-card.soon .platform-logo{box-shadow:inset 0 0 0 1px #ffffff80}.platform-card p{color:var(--muted);flex:1;margin:0 0 20px}.platform-actions{display:grid;gap:9px;margin-top:auto}.platform-card .btn{width:100%}"
+          if old_css not in text:
+              raise SystemExit('Platform CSS pattern not found')
+          text = text.replace(old_css, new_css)
+
+          text = text.replace('.contact{display:grid;grid-template-columns:repeat(5,1fr);gap:18px}', '.contact{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}')
+          text = text.replace('.contact{grid-template-columns:repeat(3,1fr)}', '.contact{grid-template-columns:repeat(2,1fr)}')
+
+          replacements = {
+            '<div class="platform-logo"><img src="assets/tmgm-logo.svg" alt="TMGM"></div>': '<div class="platform-logo"><img src="assets/tmgm-official.png" alt="TMGM official logo"></div>',
+            '<div class="platform-logo"><span class="wordmark ec">EC Markets</span></div>': '<div class="platform-logo"><img src="assets/ec-markets-official.png" alt="EC Markets official logo"></div>',
+            '<div class="platform-logo"><span class="wordmark ic">IC Markets</span></div>': '<div class="platform-logo"><img src="assets/ic-markets-official.png" alt="IC Markets official logo"></div>',
+            '<div class="platform-logo"><span class="wordmark exness">Exness</span></div>': '<div class="platform-logo exness-panel"><img src="assets/exness-official.png" alt="Exness official logo"></div>',
+            '<img src="assets/tmgm-logo.svg" alt="TMGM">': '<img src="assets/tmgm-official.png" alt="TMGM official logo">',
+            '<article class="contact-card"><h3>Email</h3><p>freddy.liang@tmgm.com</p><a class="btn btn-primary" href="mailto:freddy.liang@tmgm.com" data-t="emailBtn"></a></article>': '',
+            "contactDesc:'微信和QQ只展示二维码；也可以通过Discord、工作邮箱或Telegram联系。'": "contactDesc:'微信和QQ只展示二维码；也可以通过Discord或Telegram联系。'",
+            "submitError:'网络提交暂未成功，资料已保存在本设备。请通过邮箱或Telegram联系，并提供申请编号：'": "submitError:'网络提交暂未成功，资料已保存在本设备。请通过Telegram或Discord联系，并提供申请编号：'",
+            "contactDesc:'微信及QQ只展示二維碼；亦可以透過Discord、工作電郵或Telegram聯絡。'": "contactDesc:'微信及QQ只展示二維碼；亦可以透過Discord或Telegram聯絡。'",
+            "submitError:'網絡提交暫未成功，資料已儲存在本裝置。請透過電郵或Telegram聯絡，並提供申請編號：'": "submitError:'網絡提交暫未成功，資料已儲存在本裝置。請透過Telegram或Discord聯絡，並提供申請編號：'",
+            "contactDesc:'WeChat and QQ are shown only as QR codes. You can also use Discord, work email or Telegram.'": "contactDesc:'WeChat and QQ are shown only as QR codes. You can also use Discord or Telegram.'",
+            "submitError:'Online submission was not completed. A local copy was saved. Contact by email or Telegram and provide reference: '": "submitError:'Online submission was not completed. A local copy was saved. Contact through Telegram or Discord and provide reference: '",
+            "contactDesc:'WeChat dan QQ hanya dipaparkan sebagai kod QR. Anda juga boleh menggunakan Discord, e-mel kerja atau Telegram.'": "contactDesc:'WeChat dan QQ hanya dipaparkan sebagai kod QR. Anda juga boleh menggunakan Discord atau Telegram.'",
+            "submitError:'Penghantaran dalam talian tidak selesai. Salinan tempatan disimpan. Hubungi melalui e-mel atau Telegram dan berikan rujukan: '": "submitError:'Penghantaran dalam talian tidak selesai. Salinan tempatan disimpan. Hubungi melalui Telegram atau Discord dan berikan rujukan: '",
+            "contactDesc:'WeChat และ QQ แสดงเฉพาะคิวอาร์โค้ด และสามารถติดต่อผ่าน Discord อีเมลที่ทำงาน หรือ Telegram'": "contactDesc:'WeChat และ QQ แสดงเฉพาะคิวอาร์โค้ด และสามารถติดต่อผ่าน Discord หรือ Telegram'",
+            "submitError:'การส่งออนไลน์ไม่สำเร็จ ระบบบันทึกสำเนาในอุปกรณ์แล้ว โปรดติดต่อผ่านอีเมลหรือ Telegram พร้อมหมายเลข: '": "submitError:'การส่งออนไลน์ไม่สำเร็จ ระบบบันทึกสำเนาในอุปกรณ์แล้ว โปรดติดต่อผ่าน Telegram หรือ Discord พร้อมหมายเลข: '",
+            "const REFERRAL='https://portal.tminvgain.com/register?sales=NjAwM19GcmVkZHlMaWFuZw==&language=zh-Hans';": "const REFERRAL='https://portal.tminvgain.com/register?sales=NjAwM19GcmVkZHlMaWFuZw==&language=zh-Hans';\nconst FORM_ENDPOINT='https://formsubmit.co/ajax/'+atob('ZnJlZGR5LmxpYW5nQHRtZ20uY29t');",
+            "fetch('https://formsubmit.co/ajax/freddy.liang@tmgm.com'": "fetch(FORM_ENDPOINT"
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  print('Optional pattern not found:', old[:80])
+              text = text.replace(old, new)
+
+          if 'mailto:freddy.liang@tmgm.com' in text:
+              raise SystemExit('Public mailto remains in index')
+          index.write_text(text, encoding='utf-8')
+
+          privacy = Path('privacy.html')
+          p = privacy.read_text(encoding='utf-8')
+          p = p.replace('<footer class="footer"><div class="wrap">freddy.liang@tmgm.com</div></footer>', '<footer class="footer"><div class="wrap">满返网 · Rebate Hub</div></footer>')
+          p_replacements = {
+            '表单通过FormSubmit邮件转发服务发送至 freddy.liang@tmgm.com。': '表单通过FormSubmit邮件转发服务发送至指定客服收件箱。',
+            '需要查询、更正或删除资料，可通过工作邮箱或Telegram联系。': '需要查询、更正或删除资料，可通过Telegram或Discord联系。',
+            '表單透過FormSubmit電郵轉發服務發送至 freddy.liang@tmgm.com。': '表單透過FormSubmit轉發服務發送至指定客服收件箱。',
+            '需要查詢、更正或刪除資料，可透過工作電郵或Telegram聯絡。': '需要查詢、更正或刪除資料，可透過Telegram或Discord聯絡。',
+            'Forms are forwarded to freddy.liang@tmgm.com through the FormSubmit email service.': 'Forms are forwarded to a designated service inbox through FormSubmit.',
+            'Contact the work email or Telegram to request access, correction or deletion.': 'Contact through Telegram or Discord to request access, correction or deletion.',
+            'Borang dihantar ke freddy.liang@tmgm.com melalui perkhidmatan e-mel FormSubmit.': 'Borang dihantar ke peti masuk perkhidmatan yang ditetapkan melalui FormSubmit.',
+            'Hubungi e-mel kerja atau Telegram untuk akses, pembetulan atau pemadaman.': 'Hubungi melalui Telegram atau Discord untuk akses, pembetulan atau pemadaman.',
+            'แบบฟอร์มถูกส่งไปที่ freddy.liang@tmgm.com ผ่านบริการอีเมล FormSubmit': 'แบบฟอร์มถูกส่งไปยังกล่องรับบริการที่กำหนดผ่าน FormSubmit',
+            'ติดต่ออีเมลที่ทำงานหรือ Telegram เพื่อขอเข้าถึง แก้ไข หรือลบข้อมูล': 'ติดต่อผ่าน Telegram หรือ Discord เพื่อขอเข้าถึง แก้ไข หรือลบข้อมูล'
+          }
+          for old, new in p_replacements.items():
+              p = p.replace(old, new)
+          if 'freddy.liang@tmgm.com' in p:
+              raise SystemExit('Public email remains in privacy page')
+          privacy.write_text(p, encoding='utf-8')
+          PY
+
+      - name: Commit polished site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html privacy.html
+          git rm .github/workflows/polish-official-logos.yml
+          git commit -m "Use official platform logos and hide public email"
+          git push
