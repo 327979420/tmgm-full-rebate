@@ -1,0 +1,61 @@
+name: Finalize IC logo and multilingual tagline
+
+on:
+  push:
+    paths:
+      - .github/workflows/finalize-ic-brand.yml
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: ${{ !contains(github.event.head_commit.message, '[site-polish-done]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply final website polish
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+
+          index = Path('index.html')
+          text = index.read_text(encoding='utf-8')
+
+          replacements = {
+              "'zh-CN':{brand:'满返网',brandSub:'多平台返佣与客户服务'": "'zh-CN':{brand:'满返网',brandSub:'0抽成，完全满返，团队代理合作'",
+              "'zh-TW':{brand:'滿返網',brandSub:'多平台返佣與客戶服務'": "'zh-TW':{brand:'滿返網',brandSub:'0抽成，完全滿返，團隊代理合作'",
+              "'en':{brand:'Rebate Hub',brandSub:'Multi-platform rebates and client support'": "'en':{brand:'Rebate Hub',brandSub:'0% service cut, full rebates, team & Introducing Broker partnerships'",
+              "'ms':{brand:'Hab Rebat',brandSub:'Rebat berbilang platform dan sokongan pelanggan'": "'ms':{brand:'Hab Rebat',brandSub:'0% potongan perkhidmatan, rebat penuh, kerjasama pasukan & Introducing Broker'",
+              "'th':{brand:'ศูนย์รีเบต',brandSub:'รีเบตหลายแพลตฟอร์มและบริการลูกค้า'": "'th':{brand:'ศูนย์รีเบต',brandSub:'หักค่าบริการ 0% รีเบตเต็ม และความร่วมมือแบบทีมกับ Introducing Broker'",
+              '<div class="platform-logo"><img src="assets/ic-markets-official.png" alt="IC Markets official logo"></div>': '<div class="platform-logo ic-panel"><img src="assets/ic-markets-official.webp" alt="IC Markets official logo"></div>'
+          }
+
+          for old, new in replacements.items():
+              if old not in text:
+                  print('Pattern not found or already updated:', old[:100])
+              text = text.replace(old, new)
+
+          css_anchor = '.platform-logo.exness-panel{background:#061024;border-color:#061024}.platform-logo.exness-panel img{max-width:220px;max-height:58px}'
+          css_insert = css_anchor + '.platform-logo.ic-panel{background:linear-gradient(145deg,#050505,#11151a);border-color:#151a20;padding:8px}.platform-logo.ic-panel img{max-width:190px;max-height:86px;filter:drop-shadow(0 8px 16px #00000035)}'
+          if '.platform-logo.ic-panel{' not in text:
+              if css_anchor not in text:
+                  raise SystemExit('IC logo CSS anchor not found')
+              text = text.replace(css_anchor, css_insert)
+
+          index.write_text(text, encoding='utf-8')
+
+          logo_b64 = '''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'''
+          Path('assets/ic-markets-official.webp').write_bytes(base64.b64decode(logo_b64))
+          PY
+
+      - name: Commit final version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html assets/ic-markets-official.webp
+          git rm .github/workflows/finalize-ic-brand.yml
+          git commit -m "Finalize IC logo and multilingual brand tagline [site-polish-done]"
+          git push
