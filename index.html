@@ -119,6 +119,11 @@ button.floating-contact-link{width:100%;font:inherit;color:inherit;text-align:le
 .floating-contact-back{display:inline-flex;align-items:center;gap:5px;border:0;border-radius:9px;padding:7px 10px;background:#edf3fa;color:var(--navy);font-weight:850;cursor:pointer}
 .floating-contact-qr img{display:block;width:210px;max-width:100%;aspect-ratio:1;object-fit:contain;margin:0 auto 9px;padding:10px;border:1px solid #dfe7f1;border-radius:14px;background:#fff}
 .floating-contact-qr small{display:block;color:var(--muted);font-size:12px}
+
+/* contact-anchor-fix-v1 */
+.section.dark .heading h2,#apps .heading h2{color:#fff}
+#apps .heading p{color:#d7e4f8}
+#qq-contact,#wechat-contact{scroll-margin-top:150px}
 </style>
 </head>
 <body>
@@ -143,7 +148,7 @@ button.floating-contact-link{width:100%;font:inherit;color:inherit;text-align:le
 <section class="section white" id="tutorials"><div class="container"><div class="heading"><span class="product-kicker">TMGM</span><h2 data-t="tutorialTitle"></h2><p data-t="tutorialDesc"></p></div><div class="tutorials"><a class="card tutorial-link" href="tutorial-open.html"><h3 data-t="t1t"></h3><p data-t="t1d"></p></a><a class="card tutorial-link" href="tutorial-rebate.html"><h3 data-t="t2t"></h3><p data-t="t2d"></p></a><a class="card tutorial-link" href="tutorial-existing.html"><h3 data-t="t3t"></h3><p data-t="t3d"></p></a><a class="card tutorial-link" href="tutorial-ib.html"><h3 data-t="t4t"></h3><p data-t="t4d"></p></a></div></div></section>
 <section class="section" id="forms"><div class="container"><div class="heading"><h2 data-t="formsTitle"></h2><p data-t="formsDesc"></p></div><div class="forms"><form class="form-card" data-kind="APP"><h3 data-t="unifiedFormTitle"></h3><p style="color:var(--muted);margin-top:-7px" data-t="applicationChoiceDesc"></p><div class="choice-grid"><label class="choice-card"><input type="radio" name="application_type" value="REBATE" required><strong data-t="rebateChoice"></strong><span data-t="rebateChoiceDesc"></span></label><label class="choice-card"><input type="radio" name="application_type" value="IB" required><strong data-t="ibChoice"></strong><span data-t="ibChoiceDesc"></span></label></div><div class="field"><label data-t="platform"></label><select name="platform" required><option value="TMGM">TMGM</option><option disabled data-t="ecSoon"></option><option disabled data-t="icSoon"></option><option disabled data-t="exSoon"></option></select></div><div class="field"><label data-t="registeredEmailQ"></label><input name="registered_email" type="email" autocomplete="email" required></div><div class="field"><label data-t="registeredWithinQ"></label><select name="registered_within_3_days" required><option value="" data-t="pleaseSelect"></option><option value="yes" data-t="yesOption"></option><option value="no" data-t="noOption"></option></select></div><div class="field"><label data-t="emailReachableQ"></label><select id="emailReachable" name="reachable_via_registered_email" required><option value="" data-t="pleaseSelect"></option><option value="yes" data-t="yesOption"></option><option value="no" data-t="noOption"></option></select></div><div id="contactInstruction" class="conditional-note" hidden><span data-t="contactInstruction"></span><br><a class="inline-contact" href="#contact" data-t="contactNow"></a></div><label class="check"><input type="checkbox" required><span data-t="consent"></span></label><button class="btn btn-primary" type="submit" data-t="submit"></button><div class="result"></div></form></div></div></section>
 <section class="section white faq" id="faq"><div class="container"><div class="heading"><h2 data-t="faqTitle"></h2><p data-t="faqDesc"></p></div><details><summary data-t="faq1q"></summary><p data-t="faq1a"></p></details><details><summary data-t="faq2q"></summary><p data-t="faq2a"></p></details><details><summary data-t="faq3q"></summary><p data-t="faq3a"></p></details><details><summary data-t="faq4q"></summary><p data-t="faq4a"></p></details><details><summary data-t="faq5q"></summary><p data-t="faq5a"></p></details><details><summary data-t="faq6q"></summary><p data-t="faq6a"></p></details></div></section>
-<section class="section" id="contact"><div class="container"><div class="heading"><h2 data-t="contactTitle"></h2><p data-t="contactDesc"></p></div><div class="contact"><article class="contact-card"><a class="qr-wrap" href="https://qm.qq.com/q/WJBVC3uE8M" target="_blank" rel="noopener"><img src="assets/qq-qr.svg" alt="QQ QR code"></a><h3>QQ</h3><p data-t="scan"></p></article><article class="contact-card"><a class="qr-wrap" href="https://u.wechat.com/kHj45VpIFXCSN5JV-zx8xUc?s=2" target="_blank" rel="noopener"><img src="assets/wechat-qr.svg" alt="WeChat QR code"></a><h3>WeChat</h3><p data-t="scan"></p></article><article class="contact-card"><h3>Discord</h3><p data-t="discordText"></p><a class="btn btn-primary" href="https://discord.gg/x86Zqg7gY" target="_blank" rel="noopener" data-t="join"></a></article><article class="contact-card"><h3>Telegram</h3><p>@LiangFreddy</p><a class="btn btn-primary" href="https://t.me/LiangFreddy" target="_blank" rel="noopener" data-t="telegramBtn"></a></article></div></div></section>
+<section class="section" id="contact"><div class="container"><div class="heading"><h2 data-t="contactTitle"></h2><p data-t="contactDesc"></p></div><div class="contact"><article class="contact-card" id="qq-contact"><a class="qr-wrap" href="https://qm.qq.com/q/WJBVC3uE8M" target="_blank" rel="noopener"><img src="assets/qq-qr.svg" alt="QQ QR code"></a><h3>QQ</h3><p data-t="scan"></p></article><article class="contact-card" id="wechat-contact"><a class="qr-wrap" href="https://u.wechat.com/kHj45VpIFXCSN5JV-zx8xUc?s=2" target="_blank" rel="noopener"><img src="assets/wechat-qr.svg" alt="WeChat QR code"></a><h3>WeChat</h3><p data-t="scan"></p></article><article class="contact-card"><h3>Discord</h3><p data-t="discordText"></p><a class="btn btn-primary" href="https://discord.gg/x86Zqg7gY" target="_blank" rel="noopener" data-t="join"></a></article><article class="contact-card"><h3>Telegram</h3><p>@LiangFreddy</p><a class="btn btn-primary" href="https://t.me/LiangFreddy" target="_blank" rel="noopener" data-t="telegramBtn"></a></article></div></div></section>
 </main>
 
 <div class="floating-contact" id="floatingContact">
@@ -153,21 +158,12 @@ button.floating-contact-link{width:100%;font:inherit;color:inherit;text-align:le
       <button class="floating-contact-close" id="floatingContactClose" type="button" aria-label="Close">×</button>
     </div>
     <div class="floating-contact-links" id="floatingContactLinks">
-      <button class="floating-contact-link wechat floating-qr-trigger" type="button" data-qr-src="assets/wechat-qr.svg" data-qr-name="WeChat" aria-expanded="false"><span class="floating-contact-mark">微</span><span>WeChat</span></button>
-      <button class="floating-contact-link qq floating-qr-trigger" type="button" data-qr-src="assets/qq-qr.svg" data-qr-name="QQ" aria-expanded="false"><span class="floating-contact-mark">QQ</span><span>QQ</span></button>
+      <a class="floating-contact-link wechat" href="#wechat-contact"><span class="floating-contact-mark">微</span><span>WeChat</span></a>
+      <a class="floating-contact-link qq" href="#qq-contact"><span class="floating-contact-mark">QQ</span><span>QQ</span></a>
       <a class="floating-contact-link discord" href="https://discord.gg/x86Zqg7gY" target="_blank" rel="noopener"><span class="floating-contact-mark">D</span><span>Discord</span></a>
       <a class="floating-contact-link telegram" href="https://t.me/LiangFreddy" target="_blank" rel="noopener"><span class="floating-contact-mark">T</span><span>Telegram</span></a>
     </div>
-
-    <div class="floating-contact-qr" id="floatingContactQr" hidden>
-      <div class="floating-contact-qr-head">
-        <button class="floating-contact-back" id="floatingContactQrBack" type="button">← <span data-t="contactTitle"></span></button>
-        <strong id="floatingContactQrName"></strong>
-      </div>
-      <img id="floatingContactQrImage" src="" alt="">
-      <small data-t="scan"></small>
-    </div>
-  </div>
+</div>
   <button class="floating-contact-toggle" id="floatingContactToggle" type="button" aria-expanded="false" aria-controls="floatingContactPanel">
     <span class="floating-contact-icon">✦</span><span data-t="contactTitle"></span>
   </button>
@@ -205,14 +201,7 @@ const floatingContactClose=document.getElementById('floatingContactClose');
 function setFloatingContact(open){if(!floatingContactPanel||!floatingContactToggle)return;floatingContactPanel.hidden=!open;floatingContactToggle.setAttribute('aria-expanded',String(open));if(!open&&typeof hideFloatingQr==='function')hideFloatingQr()}
 if(floatingContact&&floatingContactToggle&&floatingContactPanel){floatingContactToggle.addEventListener('click',()=>setFloatingContact(floatingContactPanel.hidden));if(floatingContactClose)floatingContactClose.addEventListener('click',()=>setFloatingContact(false));document.addEventListener('click',event=>{if(!floatingContact.contains(event.target))setFloatingContact(false)});document.addEventListener('keydown',event=>{if(event.key==='Escape')setFloatingContact(false)})}
 
-const floatingContactLinks=document.getElementById('floatingContactLinks');
-const floatingContactQr=document.getElementById('floatingContactQr');
-const floatingContactQrImage=document.getElementById('floatingContactQrImage');
-const floatingContactQrName=document.getElementById('floatingContactQrName');
-const floatingContactQrBack=document.getElementById('floatingContactQrBack');
-function hideFloatingQr(){if(floatingContactQr)floatingContactQr.hidden=true;if(floatingContactLinks)floatingContactLinks.hidden=false;document.querySelectorAll('.floating-qr-trigger').forEach(button=>button.setAttribute('aria-expanded','false'))}
-document.querySelectorAll('.floating-qr-trigger').forEach(button=>button.addEventListener('click',event=>{event.stopPropagation();if(!floatingContactQr||!floatingContactLinks||!floatingContactQrImage||!floatingContactQrName)return;floatingContactQrImage.src=button.dataset.qrSrc||'';floatingContactQrImage.alt=(button.dataset.qrName||'Contact')+' QR code';floatingContactQrName.textContent=button.dataset.qrName||'';floatingContactLinks.hidden=true;floatingContactQr.hidden=false;button.setAttribute('aria-expanded','true')}));
-if(floatingContactQrBack)floatingContactQrBack.addEventListener('click',event=>{event.stopPropagation();hideFloatingQr()});
+document.querySelectorAll('.floating-contact-link[href^="#"]').forEach(link=>link.addEventListener('click',()=>setFloatingContact(false)));
 const saved=localStorage.getItem('tmgm-lang');const browser=(navigator.language||'en').toLowerCase();const initial=saved||(browser.startsWith('zh-tw')||browser.startsWith('zh-hk')?'zh-TW':browser.startsWith('zh')?'zh-CN':browser.startsWith('ms')?'ms':browser.startsWith('th')?'th':'en');setLang(initial);
 </script>
 </body>
