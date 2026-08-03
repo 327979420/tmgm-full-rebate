@@ -1,0 +1,80 @@
+name: Add email and Telegram contacts
+
+on:
+  push:
+    paths:
+      - .github/workflows/add-email-telegram.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update-contacts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add email and Telegram to contact section
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          old_css = ".contact{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}"
+          new_css = ".contact{display:grid;grid-template-columns:repeat(5,1fr);gap:18px}"
+          if old_css not in text:
+              raise SystemExit('Contact grid CSS not found')
+          text = text.replace(old_css, new_css, 1)
+
+          old_html = '''<section class="section white" id="contact"><div class="container"><div class="heading"><h2 data-t="contactTitle"></h2><p data-t="contactDesc"></p></div><div class="contact"><article class="contact-card"><div class="qr-placeholder" data-t="qqQr"></div><h3>QQ</h3><p data-t="qrPending"></p></article><article class="contact-card"><div class="qr-placeholder" data-t="wechatQr"></div><h3>WeChat</h3><p data-t="qrPending"></p></article><article class="contact-card"><h3>Discord</h3><p data-t="discordText"></p><a class="btn btn-primary" href="https://discord.gg/x86Zqg7gY" target="_blank" rel="noopener" data-t="joinDiscord"></a></article></div></div></section>'''
+          new_html = '''<section class="section white" id="contact"><div class="container"><div class="heading"><h2 data-t="contactTitle"></h2><p data-t="contactDesc"></p></div><div class="contact"><article class="contact-card"><div class="qr-placeholder" data-t="qqQr"></div><h3>QQ</h3><p data-t="qrPending"></p></article><article class="contact-card"><div class="qr-placeholder" data-t="wechatQr"></div><h3>WeChat</h3><p data-t="qrPending"></p></article><article class="contact-card"><h3>Discord</h3><p data-t="discordText"></p><a class="btn btn-primary" href="https://discord.gg/x86Zqg7gY" target="_blank" rel="noopener" data-t="joinDiscord"></a></article><article class="contact-card"><h3>Email</h3><p data-t="emailText"></p><a class="btn btn-primary" href="mailto:freddy.liang@tmgm.com" data-t="emailButton"></a></article><article class="contact-card"><h3>Telegram</h3><p data-t="telegramText"></p><a class="btn btn-primary" href="https://t.me/LiangFreddy" target="_blank" rel="noopener" data-t="telegramButton"></a></article></div></div></section>'''
+          if old_html not in text:
+              raise SystemExit('Contact section HTML not found')
+          text = text.replace(old_html, new_html, 1)
+
+          additions = {
+              "joinDiscord:'加入Discord',faqTitle:": "joinDiscord:'加入Discord',emailText:'通过TMGM工作邮箱联系我。',emailButton:'发送邮件',telegramText:'通过Telegram直接联系我。',telegramButton:'打开Telegram',faqTitle:",
+              "joinDiscord:'加入Discord',faqTitle:": "joinDiscord:'加入Discord',emailText:'透過TMGM工作電郵聯絡我。',emailButton:'發送電郵',telegramText:'透過Telegram直接聯絡我。',telegramButton:'開啟Telegram',faqTitle:",
+              "joinDiscord:'Join Discord',faqTitle:": "joinDiscord:'Join Discord',emailText:'Contact me through my TMGM business email.',emailButton:'Send email',telegramText:'Contact me directly on Telegram.',telegramButton:'Open Telegram',faqTitle:",
+              "joinDiscord:'Sertai Discord',faqTitle:": "joinDiscord:'Sertai Discord',emailText:'Hubungi saya melalui e-mel perniagaan TMGM.',emailButton:'Hantar e-mel',telegramText:'Hubungi saya terus melalui Telegram.',telegramButton:'Buka Telegram',faqTitle:",
+              "joinDiscord:'เข้าร่วม Discord',faqTitle:": "joinDiscord:'เข้าร่วม Discord',emailText:'ติดต่อฉันผ่านอีเมลธุรกิจ TMGM',emailButton:'ส่งอีเมล',telegramText:'ติดต่อฉันโดยตรงผ่าน Telegram',telegramButton:'เปิด Telegram',faqTitle:",
+          }
+
+          # Chinese Simplified and Traditional share the same Discord button text,
+          # so replace their two occurrences in order.
+          zh_key = "joinDiscord:'加入Discord',faqTitle:"
+          if text.count(zh_key) != 2:
+              raise SystemExit(f'Expected two Chinese contact translation blocks, found {text.count(zh_key)}')
+          text = text.replace(zh_key, "joinDiscord:'加入Discord',emailText:'通过TMGM工作邮箱联系我。',emailButton:'发送邮件',telegramText:'通过Telegram直接联系我。',telegramButton:'打开Telegram',faqTitle:", 1)
+          text = text.replace(zh_key, "joinDiscord:'加入Discord',emailText:'透過TMGM工作電郵聯絡我。',emailButton:'發送電郵',telegramText:'透過Telegram直接聯絡我。',telegramButton:'開啟Telegram',faqTitle:", 1)
+
+          for old, new in [
+              ("joinDiscord:'Join Discord',faqTitle:", "joinDiscord:'Join Discord',emailText:'Contact me through my TMGM business email.',emailButton:'Send email',telegramText:'Contact me directly on Telegram.',telegramButton:'Open Telegram',faqTitle:"),
+              ("joinDiscord:'Sertai Discord',faqTitle:", "joinDiscord:'Sertai Discord',emailText:'Hubungi saya melalui e-mel perniagaan TMGM.',emailButton:'Hantar e-mel',telegramText:'Hubungi saya terus melalui Telegram.',telegramButton:'Buka Telegram',faqTitle:"),
+              ("joinDiscord:'เข้าร่วม Discord',faqTitle:", "joinDiscord:'เข้าร่วม Discord',emailText:'ติดต่อฉันผ่านอีเมลธุรกิจ TMGM',emailButton:'ส่งอีเมล',telegramText:'ติดต่อฉันโดยตรงผ่าน Telegram',telegramButton:'เปิด Telegram',faqTitle:"),
+          ]:
+              if old not in text:
+                  raise SystemExit(f'Translation insertion point not found: {old}')
+              text = text.replace(old, new, 1)
+
+          if 'freddy.liang@tmgm.com' not in text or 'https://t.me/LiangFreddy' not in text:
+              raise SystemExit('New contact links were not added')
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit contact updates
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No contact changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Add email and Telegram contacts"
+          git push
