@@ -3,66 +3,68 @@ from pathlib import Path
 p = Path('index.html')
 s = p.read_text(encoding='utf-8')
 
+# Keep the downloads heading readable on the dark background.
 css = r'''
-/* floating-contact-v1 */
+/* floating-contact-qr-v2 */
 .section.dark .heading h2,#apps .heading h2{color:#fff}
 #apps .heading p{color:#d7e4f8}
-.floating-contact{position:fixed;right:22px;bottom:22px;z-index:90;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
-.floating-contact-toggle{display:flex;align-items:center;gap:9px;border:0;border-radius:999px;padding:13px 17px;background:linear-gradient(135deg,#16b8d7,#1678d2);color:#fff;font-weight:900;cursor:pointer;box-shadow:0 15px 38px #061a4440;transition:transform .18s ease,box-shadow .18s ease}
-.floating-contact-toggle:hover{transform:translateY(-2px);box-shadow:0 19px 44px #061a4450}
-.floating-contact-icon{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#ffffff22;font-size:16px}
-.floating-contact-panel{width:280px;padding:15px;border:1px solid #d7e1ed;border-radius:18px;background:#fff;box-shadow:0 22px 56px #061a4438;color:var(--text)}
-.floating-contact-panel[hidden]{display:none}
-.floating-contact-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 2px 12px}
-.floating-contact-head strong{font-size:17px;color:var(--navy)}
-.floating-contact-close{border:0;background:#edf3fa;color:var(--navy);width:30px;height:30px;border-radius:50%;font-size:20px;line-height:1;cursor:pointer}
-.floating-contact-links{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.floating-contact-link{display:flex;align-items:center;gap:9px;padding:11px 10px;border:1px solid #dfe7f1;border-radius:12px;background:#f8fbff;font-weight:800;font-size:13px;transition:transform .16s ease,border-color .16s ease,background .16s ease}
-.floating-contact-link:hover{transform:translateY(-1px);border-color:#7bc7db;background:#eefaff}
-.floating-contact-mark{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;background:var(--navy);color:#fff;font-size:12px;font-weight:950}
-.floating-contact-link.wechat .floating-contact-mark{background:#16a65a}
-.floating-contact-link.qq .floating-contact-mark{background:#1678d2}
-.floating-contact-link.discord .floating-contact-mark{background:#5865f2}
-.floating-contact-link.telegram .floating-contact-mark{background:#229ed9}
-@media(max-width:900px){.floating-contact{right:13px;bottom:68px}.floating-contact-panel{width:min(280px,calc(100vw - 26px))}.floating-contact-toggle{padding:12px 15px}}
+button.floating-contact-link{width:100%;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.floating-contact-qr{padding:4px 2px 1px;text-align:center}
+.floating-contact-qr[hidden],.floating-contact-links[hidden]{display:none}
+.floating-contact-qr-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+.floating-contact-qr-head strong{color:var(--navy);font-size:15px}
+.floating-contact-back{display:inline-flex;align-items:center;gap:5px;border:0;border-radius:9px;padding:7px 10px;background:#edf3fa;color:var(--navy);font-weight:850;cursor:pointer}
+.floating-contact-qr img{display:block;width:210px;max-width:100%;aspect-ratio:1;object-fit:contain;margin:0 auto 9px;padding:10px;border:1px solid #dfe7f1;border-radius:14px;background:#fff}
+.floating-contact-qr small{display:block;color:var(--muted);font-size:12px}
 '''
-if '/* floating-contact-v1 */' not in s:
+if '/* floating-contact-qr-v2 */' not in s:
     s = s.replace('</style>', css + '</style>', 1)
 
-floating_html = r'''
-<div class="floating-contact" id="floatingContact">
-  <div class="floating-contact-panel" id="floatingContactPanel" hidden>
-    <div class="floating-contact-head">
-      <strong data-t="contactTitle"></strong>
-      <button class="floating-contact-close" id="floatingContactClose" type="button" aria-label="Close">×</button>
+old_wechat = '<a class="floating-contact-link wechat" href="https://u.wechat.com/kHj45VpIFXCSN5JV-zx8xUc?s=2" target="_blank" rel="noopener"><span class="floating-contact-mark">微</span><span>WeChat</span></a>'
+new_wechat = '<button class="floating-contact-link wechat floating-qr-trigger" type="button" data-qr-src="assets/wechat-qr.svg" data-qr-name="WeChat" aria-expanded="false"><span class="floating-contact-mark">微</span><span>WeChat</span></button>'
+old_qq = '<a class="floating-contact-link qq" href="https://qm.qq.com/q/WJBVC3uE8M" target="_blank" rel="noopener"><span class="floating-contact-mark">QQ</span><span>QQ</span></a>'
+new_qq = '<button class="floating-contact-link qq floating-qr-trigger" type="button" data-qr-src="assets/qq-qr.svg" data-qr-name="QQ" aria-expanded="false"><span class="floating-contact-mark">QQ</span><span>QQ</span></button>'
+
+s = s.replace(old_wechat, new_wechat, 1)
+s = s.replace(old_qq, new_qq, 1)
+s = s.replace('<div class="floating-contact-links">', '<div class="floating-contact-links" id="floatingContactLinks">', 1)
+
+qr_html = r'''
+    <div class="floating-contact-qr" id="floatingContactQr" hidden>
+      <div class="floating-contact-qr-head">
+        <button class="floating-contact-back" id="floatingContactQrBack" type="button">← <span data-t="contactTitle"></span></button>
+        <strong id="floatingContactQrName"></strong>
+      </div>
+      <img id="floatingContactQrImage" src="" alt="">
+      <small data-t="scan"></small>
     </div>
-    <div class="floating-contact-links">
-      <a class="floating-contact-link wechat" href="https://u.wechat.com/kHj45VpIFXCSN5JV-zx8xUc?s=2" target="_blank" rel="noopener"><span class="floating-contact-mark">微</span><span>WeChat</span></a>
-      <a class="floating-contact-link qq" href="https://qm.qq.com/q/WJBVC3uE8M" target="_blank" rel="noopener"><span class="floating-contact-mark">QQ</span><span>QQ</span></a>
-      <a class="floating-contact-link discord" href="https://discord.gg/x86Zqg7gY" target="_blank" rel="noopener"><span class="floating-contact-mark">D</span><span>Discord</span></a>
-      <a class="floating-contact-link telegram" href="https://t.me/LiangFreddy" target="_blank" rel="noopener"><span class="floating-contact-mark">T</span><span>Telegram</span></a>
-    </div>
-  </div>
-  <button class="floating-contact-toggle" id="floatingContactToggle" type="button" aria-expanded="false" aria-controls="floatingContactPanel">
-    <span class="floating-contact-icon">✦</span><span data-t="contactTitle"></span>
-  </button>
-</div>
 '''
-if 'id="floatingContact"' not in s:
-    s = s.replace('<footer class="footer">', floating_html + '<footer class="footer">', 1)
+needle = '      <a class="floating-contact-link telegram" href="https://t.me/LiangFreddy" target="_blank" rel="noopener"><span class="floating-contact-mark">T</span><span>Telegram</span></a>\n    </div>\n  </div>\n  <button class="floating-contact-toggle"'
+replacement = '      <a class="floating-contact-link telegram" href="https://t.me/LiangFreddy" target="_blank" rel="noopener"><span class="floating-contact-mark">T</span><span>Telegram</span></a>\n    </div>\n' + qr_html + '  </div>\n  <button class="floating-contact-toggle"'
+if 'id="floatingContactQr"' not in s:
+    if needle not in s:
+        raise SystemExit('Floating contact HTML anchor not found')
+    s = s.replace(needle, replacement, 1)
 
 js = r'''
-const floatingContact=document.getElementById('floatingContact');
-const floatingContactToggle=document.getElementById('floatingContactToggle');
-const floatingContactPanel=document.getElementById('floatingContactPanel');
-const floatingContactClose=document.getElementById('floatingContactClose');
-function setFloatingContact(open){if(!floatingContactPanel||!floatingContactToggle)return;floatingContactPanel.hidden=!open;floatingContactToggle.setAttribute('aria-expanded',String(open))}
-if(floatingContact&&floatingContactToggle&&floatingContactPanel){floatingContactToggle.addEventListener('click',()=>setFloatingContact(floatingContactPanel.hidden));if(floatingContactClose)floatingContactClose.addEventListener('click',()=>setFloatingContact(false));document.addEventListener('click',event=>{if(!floatingContact.contains(event.target))setFloatingContact(false)});document.addEventListener('keydown',event=>{if(event.key==='Escape')setFloatingContact(false)})}
+const floatingContactLinks=document.getElementById('floatingContactLinks');
+const floatingContactQr=document.getElementById('floatingContactQr');
+const floatingContactQrImage=document.getElementById('floatingContactQrImage');
+const floatingContactQrName=document.getElementById('floatingContactQrName');
+const floatingContactQrBack=document.getElementById('floatingContactQrBack');
+function hideFloatingQr(){if(floatingContactQr)floatingContactQr.hidden=true;if(floatingContactLinks)floatingContactLinks.hidden=false;document.querySelectorAll('.floating-qr-trigger').forEach(button=>button.setAttribute('aria-expanded','false'))}
+document.querySelectorAll('.floating-qr-trigger').forEach(button=>button.addEventListener('click',event=>{event.stopPropagation();if(!floatingContactQr||!floatingContactLinks||!floatingContactQrImage||!floatingContactQrName)return;floatingContactQrImage.src=button.dataset.qrSrc||'';floatingContactQrImage.alt=(button.dataset.qrName||'Contact')+' QR code';floatingContactQrName.textContent=button.dataset.qrName||'';floatingContactLinks.hidden=true;floatingContactQr.hidden=false;button.setAttribute('aria-expanded','true')}));
+if(floatingContactQrBack)floatingContactQrBack.addEventListener('click',event=>{event.stopPropagation();hideFloatingQr()});
 '''
-if 'const floatingContact=document.getElementById' not in s:
+if 'const floatingContactLinks=document.getElementById' not in s:
     anchor = "const saved=localStorage.getItem('tmgm-lang');"
     if anchor not in s:
         raise SystemExit('JavaScript insertion anchor not found')
     s = s.replace(anchor, js + anchor, 1)
+
+# Reset the QR view whenever the floating panel closes.
+old_set = "function setFloatingContact(open){if(!floatingContactPanel||!floatingContactToggle)return;floatingContactPanel.hidden=!open;floatingContactToggle.setAttribute('aria-expanded',String(open))}"
+new_set = "function setFloatingContact(open){if(!floatingContactPanel||!floatingContactToggle)return;floatingContactPanel.hidden=!open;floatingContactToggle.setAttribute('aria-expanded',String(open));if(!open&&typeof hideFloatingQr==='function')hideFloatingQr()}"
+s = s.replace(old_set, new_set, 1)
 
 p.write_text(s, encoding='utf-8')
