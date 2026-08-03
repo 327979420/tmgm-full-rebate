@@ -107,6 +107,18 @@ body{background:#edf2f8}
 .floating-contact-link.discord .floating-contact-mark{background:#5865f2}
 .floating-contact-link.telegram .floating-contact-mark{background:#229ed9}
 @media(max-width:900px){.floating-contact{right:13px;bottom:68px}.floating-contact-panel{width:min(280px,calc(100vw - 26px))}.floating-contact-toggle{padding:12px 15px}}
+
+/* floating-contact-qr-v2 */
+.section.dark .heading h2,#apps .heading h2{color:#fff}
+#apps .heading p{color:#d7e4f8}
+button.floating-contact-link{width:100%;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.floating-contact-qr{padding:4px 2px 1px;text-align:center}
+.floating-contact-qr[hidden],.floating-contact-links[hidden]{display:none}
+.floating-contact-qr-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+.floating-contact-qr-head strong{color:var(--navy);font-size:15px}
+.floating-contact-back{display:inline-flex;align-items:center;gap:5px;border:0;border-radius:9px;padding:7px 10px;background:#edf3fa;color:var(--navy);font-weight:850;cursor:pointer}
+.floating-contact-qr img{display:block;width:210px;max-width:100%;aspect-ratio:1;object-fit:contain;margin:0 auto 9px;padding:10px;border:1px solid #dfe7f1;border-radius:14px;background:#fff}
+.floating-contact-qr small{display:block;color:var(--muted);font-size:12px}
 </style>
 </head>
 <body>
@@ -140,11 +152,20 @@ body{background:#edf2f8}
       <strong data-t="contactTitle"></strong>
       <button class="floating-contact-close" id="floatingContactClose" type="button" aria-label="Close">×</button>
     </div>
-    <div class="floating-contact-links">
-      <a class="floating-contact-link wechat" href="https://u.wechat.com/kHj45VpIFXCSN5JV-zx8xUc?s=2" target="_blank" rel="noopener"><span class="floating-contact-mark">微</span><span>WeChat</span></a>
-      <a class="floating-contact-link qq" href="https://qm.qq.com/q/WJBVC3uE8M" target="_blank" rel="noopener"><span class="floating-contact-mark">QQ</span><span>QQ</span></a>
+    <div class="floating-contact-links" id="floatingContactLinks">
+      <button class="floating-contact-link wechat floating-qr-trigger" type="button" data-qr-src="assets/wechat-qr.svg" data-qr-name="WeChat" aria-expanded="false"><span class="floating-contact-mark">微</span><span>WeChat</span></button>
+      <button class="floating-contact-link qq floating-qr-trigger" type="button" data-qr-src="assets/qq-qr.svg" data-qr-name="QQ" aria-expanded="false"><span class="floating-contact-mark">QQ</span><span>QQ</span></button>
       <a class="floating-contact-link discord" href="https://discord.gg/x86Zqg7gY" target="_blank" rel="noopener"><span class="floating-contact-mark">D</span><span>Discord</span></a>
       <a class="floating-contact-link telegram" href="https://t.me/LiangFreddy" target="_blank" rel="noopener"><span class="floating-contact-mark">T</span><span>Telegram</span></a>
+    </div>
+
+    <div class="floating-contact-qr" id="floatingContactQr" hidden>
+      <div class="floating-contact-qr-head">
+        <button class="floating-contact-back" id="floatingContactQrBack" type="button">← <span data-t="contactTitle"></span></button>
+        <strong id="floatingContactQrName"></strong>
+      </div>
+      <img id="floatingContactQrImage" src="" alt="">
+      <small data-t="scan"></small>
     </div>
   </div>
   <button class="floating-contact-toggle" id="floatingContactToggle" type="button" aria-expanded="false" aria-controls="floatingContactPanel">
@@ -181,8 +202,17 @@ const floatingContact=document.getElementById('floatingContact');
 const floatingContactToggle=document.getElementById('floatingContactToggle');
 const floatingContactPanel=document.getElementById('floatingContactPanel');
 const floatingContactClose=document.getElementById('floatingContactClose');
-function setFloatingContact(open){if(!floatingContactPanel||!floatingContactToggle)return;floatingContactPanel.hidden=!open;floatingContactToggle.setAttribute('aria-expanded',String(open))}
+function setFloatingContact(open){if(!floatingContactPanel||!floatingContactToggle)return;floatingContactPanel.hidden=!open;floatingContactToggle.setAttribute('aria-expanded',String(open));if(!open&&typeof hideFloatingQr==='function')hideFloatingQr()}
 if(floatingContact&&floatingContactToggle&&floatingContactPanel){floatingContactToggle.addEventListener('click',()=>setFloatingContact(floatingContactPanel.hidden));if(floatingContactClose)floatingContactClose.addEventListener('click',()=>setFloatingContact(false));document.addEventListener('click',event=>{if(!floatingContact.contains(event.target))setFloatingContact(false)});document.addEventListener('keydown',event=>{if(event.key==='Escape')setFloatingContact(false)})}
+
+const floatingContactLinks=document.getElementById('floatingContactLinks');
+const floatingContactQr=document.getElementById('floatingContactQr');
+const floatingContactQrImage=document.getElementById('floatingContactQrImage');
+const floatingContactQrName=document.getElementById('floatingContactQrName');
+const floatingContactQrBack=document.getElementById('floatingContactQrBack');
+function hideFloatingQr(){if(floatingContactQr)floatingContactQr.hidden=true;if(floatingContactLinks)floatingContactLinks.hidden=false;document.querySelectorAll('.floating-qr-trigger').forEach(button=>button.setAttribute('aria-expanded','false'))}
+document.querySelectorAll('.floating-qr-trigger').forEach(button=>button.addEventListener('click',event=>{event.stopPropagation();if(!floatingContactQr||!floatingContactLinks||!floatingContactQrImage||!floatingContactQrName)return;floatingContactQrImage.src=button.dataset.qrSrc||'';floatingContactQrImage.alt=(button.dataset.qrName||'Contact')+' QR code';floatingContactQrName.textContent=button.dataset.qrName||'';floatingContactLinks.hidden=true;floatingContactQr.hidden=false;button.setAttribute('aria-expanded','true')}));
+if(floatingContactQrBack)floatingContactQrBack.addEventListener('click',event=>{event.stopPropagation();hideFloatingQr()});
 const saved=localStorage.getItem('tmgm-lang');const browser=(navigator.language||'en').toLowerCase();const initial=saved||(browser.startsWith('zh-tw')||browser.startsWith('zh-hk')?'zh-TW':browser.startsWith('zh')?'zh-CN':browser.startsWith('ms')?'ms':browser.startsWith('th')?'th':'en');setLang(initial);
 </script>
 </body>
