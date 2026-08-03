@@ -1,0 +1,84 @@
+name: Pin and mask rebate ticker
+
+on:
+  push:
+    paths:
+      - .github/workflows/pin-mask-rebate-ticker.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update-ticker:
+    if: ${{ !contains(github.event.head_commit.message, '[ticker-done]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pin ticker, slow animation, and mask TA accounts
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          # Move the ticker directly below the sticky navigation so it remains visible everywhere.
+          ticker_match = re.search(r'<section class="rebate-proof">.*?</section>', text, re.S)
+          if not ticker_match:
+              raise SystemExit('Rebate ticker section not found')
+          ticker = ticker_match.group(0)
+          text = text[:ticker_match.start()] + text[ticker_match.end():]
+          header_anchor = '</header>\n<main id="top">'
+          if header_anchor not in text:
+              raise SystemExit('Header anchor not found')
+          text = text.replace(header_anchor, '</header>\n' + ticker + '\n<main id="top">', 1)
+
+          # Compact sticky bar and slower animation.
+          text = re.sub(
+              r'\.rebate-proof\{[^}]*\}',
+              '.rebate-proof{position:sticky;top:72px;z-index:45;background:#071a3d;color:#fff;padding:8px 0;border-top:1px solid #ffffff12;border-bottom:1px solid #ffffff12;box-shadow:0 8px 20px #020b1e26}',
+              text,
+              count=1
+          )
+          text = re.sub(r'\.proof-head\{[^}]*\}', '.proof-head{display:none}', text, count=1)
+          text = re.sub(r'animation:rebateTicker\s+\d+s\s+linear\s+infinite', 'animation:rebateTicker 96s linear infinite', text, count=1)
+          text = re.sub(r'\.ticker-item\{[^}]*\}', '.ticker-item{display:flex;align-items:center;gap:10px;white-space:nowrap;padding:7px 13px;border:1px solid #ffffff20;border-radius:999px;background:#ffffff0d;font-size:13px}', text, count=1)
+
+          def mask_account(raw):
+              parts = [p.strip() for p in raw.split('/')]
+              masked = []
+              for part in parts:
+                  digits = re.sub(r'\D', '', part)
+                  n = len(digits)
+                  if n >= 8:
+                      value = digits[:2] + '****' + digits[-2:]
+                  elif n == 7:
+                      value = digits[:2] + '***' + digits[-2:]
+                  elif n == 6:
+                      value = digits[:2] + '***' + digits[-1:]
+                  elif n >= 4:
+                      value = digits[0] + '***' + digits[-1]
+                  else:
+                      value = '***'
+                  masked.append(value)
+              return ' / '.join(masked)
+
+          text = re.sub(
+              r'<b>IB TA\s+([^<]+)</b>',
+              lambda m: '<b>IB TA ' + mask_account(m.group(1)) + '</b>',
+              text
+          )
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git rm .github/workflows/pin-mask-rebate-ticker.yml
+          git commit -m "Pin, slow, and mask rebate ticker [ticker-done]"
+          git push
