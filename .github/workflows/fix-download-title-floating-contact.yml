@@ -2,8 +2,6 @@ name: Fix download title and floating contact
 
 on:
   push:
-    paths:
-      - .github/triggers/fix-download-title-floating-contact.txt
 
 permissions:
   contents: write
@@ -92,5 +90,6 @@ if(floatingContact&&floatingContactToggle&&floatingContactPanel){floatingContact
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
+          git rm .github/workflows/fix-download-title-floating-contact.yml .github/triggers/fix-download-title-floating-contact.txt
           git commit -m "Fix download heading contrast and add floating contact menu"
           git push
