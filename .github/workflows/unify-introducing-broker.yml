@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Replace agent terminology
+      - name: Standardize and polish IB terminology
         shell: bash
         run: |
           python3 - <<'PY'
@@ -24,17 +24,14 @@ jobs:
           path = Path('index.html')
           text = path.read_text(encoding='utf-8')
 
-          # Rename translation keys so the source also uses IB terminology.
           text = text.replace('applyAgent', 'applyIB')
           text = text.replace('agentForm', 'ibForm')
 
-          # Chinese, Malay and Thai display terminology: always use the English industry term.
           text = text.replace('代理', 'Introducing Broker')
           text = text.replace('Ejen', 'Introducing Broker')
           text = text.replace('ejen', 'Introducing Broker')
           text = text.replace('ตัวแทน', 'Introducing Broker')
 
-          # English display terminology.
           replacements = {
               'AGENT APPLICATION': 'INTRODUCING BROKER APPLICATION',
               'Agent Application': 'Introducing Broker Application',
@@ -47,11 +44,27 @@ jobs:
               'Confirm the agent agreement': 'Confirm the Introducing Broker agreement',
               'Agent application': 'Introducing Broker application',
               'Agent / commission-focused': 'Introducing Broker / commission-focused',
+              '做Introducing Broker/刷佣金': 'Introducing Broker / 佣金策略',
+              '申请Introducing Broker': '申请成为 Introducing Broker',
+              '申請Introducing Broker': '申請成為 Introducing Broker',
+              '成为Introducing Broker': '成為 Introducing Broker',
+              '成為Introducing Broker': '成為 Introducing Broker',
+              '与Introducing Broker': '与 Introducing Broker',
+              '與Introducing Broker': '與 Introducing Broker',
+              '和Introducing Broker': '和 Introducing Broker',
+              '或Introducing Broker': '或 Introducing Broker',
+              '确认Introducing Broker': '确认 Introducing Broker',
+              '確認Introducing Broker': '確認 Introducing Broker',
+              "ibForm:'Introducing Broker申请'": "ibForm:'Introducing Broker 申请'",
+              "ibForm:'Introducing Broker申請'": "ibForm:'Introducing Broker 申請'",
           }
           for old, new in replacements.items():
               text = text.replace(old, new)
 
-          # Final visible-text checks. Code keys have already been renamed.
+          # Add spacing where Thai text touches the English industry term.
+          text = re.sub(r'([\u0E00-\u0E7F])Introducing Broker', r'\1 Introducing Broker', text)
+          text = re.sub(r'Introducing Broker([\u0E00-\u0E7F])', r'Introducing Broker \1', text)
+
           forbidden = ['代理', 'Ejen', 'ejen', 'ตัวแทน']
           for term in forbidden:
               if term in text:
@@ -73,5 +86,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Standardize Introducing Broker terminology"
+          git commit -m "Polish Introducing Broker wording"
           git push
