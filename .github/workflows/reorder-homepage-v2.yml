@@ -1,0 +1,89 @@
+name: Reorder homepage sections and add fourth step
+
+on:
+  push:
+    paths:
+      - .github/workflows/reorder-homepage-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reorder homepage
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          # Remove the hero status notice.
+          text = text.replace('<div class="notice" data-t="heroNote"></div>', '')
+
+          # Add step 04 once.
+          process_match = re.search(r'<section class="section" id="process">.*?</section>', text, flags=re.S)
+          if not process_match:
+              raise SystemExit('Process section not found')
+          process = process_match.group(0)
+          if 'data-t="p4t"' not in process:
+              needle = '<article class="card"><div class="step">03</div><h3 data-t="p3t"></h3><p data-t="p3d"></p></article>'
+              addition = needle + '<article class="card"><div class="step">04</div><h3 data-t="p4t"></h3><p data-t="p4d"></p></article>'
+              if needle not in process:
+                  raise SystemExit('Step 03 anchor not found')
+              process = process.replace(needle, addition, 1)
+              text = text[:process_match.start()] + process + text[process_match.end():]
+
+          translations = {
+              "p3d:'登录平台确认协议，权限才会生效。'": "p3d:'登录平台确认协议，权限才会生效。',p4t:'享受满返',p4d:'享受最高返佣与更低交易成本。'",
+              "p3d:'登入平台確認協議，權限才會生效。'": "p3d:'登入平台確認協議，權限才會生效。',p4t:'享受滿返',p4d:'享受最高返佣與更低交易成本。'",
+              "p3d:'Log in and accept the agreement to activate access.'": "p3d:'Log in and accept the agreement to activate access.',p4t:'Enjoy maximum rebates',p4d:'Get maximum rebates and lower trading costs.'",
+              "p3d:'Log masuk dan terima perjanjian untuk mengaktifkan akses.'": "p3d:'Log masuk dan terima perjanjian untuk mengaktifkan akses.',p4t:'Nikmati rebat maksimum',p4d:'Dapatkan rebat maksimum dan kos dagangan lebih rendah.'",
+              "p3d:'เข้าสู่ระบบและยอมรับข้อตกลงเพื่อเปิดสิทธิ์'": "p3d:'เข้าสู่ระบบและยอมรับข้อตกลงเพื่อเปิดสิทธิ์',p4t:'รับรีเบตสูงสุด',p4d:'รับรีเบตสูงสุดและลดต้นทุนการเทรด'",
+          }
+          for old, new in translations.items():
+              if old in text and 'p4t:' not in text[text.find(old):text.find(old)+300]:
+                  text = text.replace(old, new, 1)
+
+          # Reorder major conversion sections immediately after the hero.
+          order = ['process', 'platforms', 'tmgm', 'apps', 'tutorials', 'forms']
+          sections = {}
+          for section_id in order:
+              match = re.search(rf'<section class="section[^>]*" id="{section_id}">.*?</section>', text, flags=re.S)
+              if not match:
+                  raise SystemExit(f'Section not found: {section_id}')
+              sections[section_id] = match.group(0)
+              text = text[:match.start()] + text[match.end():]
+
+          hero = re.search(r'<section class="hero">.*?</section>', text, flags=re.S)
+          if not hero:
+              raise SystemExit('Hero section not found')
+          sequence = '\n'.join(sections[section_id] for section_id in order)
+          text = text[:hero.end()] + '\n' + sequence + text[hero.end():]
+
+          css = r'''
+          /* four-step-process-v1 */
+          #process .info-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+          #process .card:nth-child(4) .step{color:#f28a22}
+          @media(max-width:1000px){#process .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+          @media(max-width:600px){#process .info-grid{grid-template-columns:1fr}}
+          '''
+          if '/* four-step-process-v1 */' not in text:
+              text = text.replace('</style>', css + '\n</style>', 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit site update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git rm .github/workflows/reorder-homepage-v2.yml
+          git commit -m "Reorder homepage conversion flow"
+          git push
