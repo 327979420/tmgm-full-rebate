@@ -1,0 +1,164 @@
+name: Finalize website content and functions
+
+on:
+  push:
+    paths:
+      - .github/workflows/finalize-site.yml
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply final website updates
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          text = text.replace(
+              ".table-wrap{overflow:auto;background:#fff;border-radius:18px;box-shadow:0 14px 38px #061a4412}.policy{",
+              ".table-wrap{overflow:auto;background:#fff;border-radius:18px;box-shadow:0 14px 38px #061a4412}.table-note{margin:12px 6px 0;color:var(--muted);font-size:14px}.policy{"
+          )
+          text = text.replace(
+              ".policy thead th{background:var(--navy);color:#fff}",
+              ".policy thead th{background:var(--navy);color:#fff}.policy thead th.raw{background:#efe7bf;color:#24324a;text-shadow:none}"
+          )
+          text = text.replace(
+              ".policy .raw .cell-sub{color:#7b5b00}",
+              ".policy .raw .cell-sub,.policy thead th.raw .cell-sub{color:#7b5b00}.tutorial-link{display:block;color:inherit}.app .btn{margin-top:12px;width:100%;padding:10px 12px}"
+          )
+          text = text.replace(
+              '<div class="table-wrap"><table class="policy" id="policyTable"></table></div><div class="cards"',
+              '<div class="table-wrap"><table class="policy" id="policyTable"></table></div><p class="table-note" data-t="policyNote"></p><div class="cards"'
+          )
+
+          old_apps = '<div class="apps"><article class="app"><strong>Windows</strong><span data-t="pending"></span></article><article class="app"><strong>macOS</strong><span data-t="pending"></span></article><article class="app"><strong>iOS</strong><span data-t="pending"></span></article><article class="app"><strong>Android</strong><span data-t="pending"></span></article><article class="app"><strong>WebTrader</strong><span data-t="pending"></span></article></div>'
+          new_apps = '<div class="apps"><article class="app"><strong>Windows</strong><span data-t="officialSource"></span><a class="btn btn-primary" href="https://www.tmgm.com/en-au/mt5-download" target="_blank" rel="noopener" data-t="downloadOfficial"></a></article><article class="app"><strong>macOS</strong><span data-t="officialSource"></span><a class="btn btn-primary" href="https://www.tmgm.com/en-au/mt5-download" target="_blank" rel="noopener" data-t="downloadOfficial"></a></article><article class="app"><strong>iOS</strong><span data-t="officialSource"></span><a class="btn btn-primary" href="https://apps.apple.com/hk/app/tmgm-app/id6450881326" target="_blank" rel="noopener" data-t="downloadOfficial"></a></article><article class="app"><strong>Android</strong><span data-t="officialSource"></span><a class="btn btn-primary" href="https://play.google.com/store/apps/details?id=com.trademaxaustralia.tmgm" target="_blank" rel="noopener" data-t="downloadOfficial"></a></article><article class="app"><strong>WebTrader</strong><span data-t="officialSource"></span><a class="btn btn-primary" href="https://www.tmgm.com/eng/platform/metatrader-5" target="_blank" rel="noopener" data-t="openOfficial"></a></article></div>'
+          text = text.replace(old_apps, new_apps)
+
+          old_tutorial = '<div class="tutorial"><article class="card"><h3 data-t="t1t"></h3><p data-t="t1d"></p></article><article class="card"><h3 data-t="t2t"></h3><p data-t="t2d"></p></article><article class="card"><h3 data-t="t3t"></h3><p data-t="t3d"></p></article><article class="card"><h3 data-t="t4t"></h3><p data-t="t4d"></p></article></div>'
+          new_tutorial = '<div class="tutorial"><a class="card tutorial-link" href="tutorial-open.html"><h3 data-t="t1t"></h3><p data-t="t1d"></p></a><a class="card tutorial-link" href="tutorial-rebate.html"><h3 data-t="t2t"></h3><p data-t="t2d"></p></a><a class="card tutorial-link" href="tutorial-existing.html"><h3 data-t="t3t"></h3><p data-t="t3d"></p></a><a class="card tutorial-link" href="tutorial-ib.html"><h3 data-t="t4t"></h3><p data-t="t4d"></p></a></div>'
+          text = text.replace(old_tutorial, new_tutorial)
+
+          locale_updates = {
+            'zh-CN': {
+              'kicker':'帮助交易者降低交易成本 · 平台满返 · Introducing Broker服务',
+              'heroTitle':'帮助交易者降低交易成本',
+              'heroDesc':'通过专属链接开户并申请平台满返，帮助你降低交易成本；新用户也可以提交 Introducing Broker 申请。',
+              'policyTitle':'TMGM交易成本与满返参考',
+              'policyDesc':'本网站的核心目标是帮助交易者降低交易成本。以下数据为当前政策参考，正式执行以账户类型、产品、交易记录及最终审核结果为准。',
+              'policyNote':'注：以下数据仅供参考，其中黄金示例以交易1手黄金为例；不同产品、账户类型和实际成交情况会影响最终交易成本与返还。',
+              'formsDesc':'提交后，申请资料将发送至客服邮箱并生成申请编号。请勿提交密码、验证码、银行卡或证件图片。',
+              'officialSource':'TMGM官方来源', 'downloadOfficial':'官方下载', 'openOfficial':'打开官方平台',
+              'submitting':'正在提交…', 'submitError':'提交暂未成功，资料已保存在本设备，请通过邮箱或Telegram联系。申请编号：'
+            },
+            'zh-TW': {
+              'kicker':'幫助交易者降低交易成本 · 平台滿返 · Introducing Broker服務',
+              'heroTitle':'幫助交易者降低交易成本',
+              'heroDesc':'透過專屬連結開戶並申請平台滿返，幫助你降低交易成本；新用戶也可以提交 Introducing Broker 申請。',
+              'policyTitle':'TMGM交易成本與滿返參考',
+              'policyDesc':'本網站的核心目標是幫助交易者降低交易成本。以下數據為當前政策參考，正式執行以帳戶類型、產品、交易記錄及最終審核結果為準。',
+              'policyNote':'註：以下數據僅供參考，其中黃金示例以交易1手黃金為例；不同產品、帳戶類型和實際成交情況會影響最終交易成本與返還。',
+              'formsDesc':'提交後，申請資料將發送至客服電郵並產生申請編號。請勿提交密碼、驗證碼、銀行卡或證件圖片。',
+              'officialSource':'TMGM官方來源', 'downloadOfficial':'官方下載', 'openOfficial':'開啟官方平台',
+              'submitting':'正在提交…', 'submitError':'提交暫未成功，資料已儲存在本裝置，請透過電郵或Telegram聯絡。申請編號：'
+            },
+            'en': {
+              'kicker':'LOWER TRADING COSTS · PLATFORM REBATES · INTRODUCING BROKER SUPPORT',
+              'heroTitle':'Help traders reduce trading costs',
+              'heroDesc':'Open through the referral link and apply for platform rebates to help reduce trading costs. New users may also submit an Introducing Broker application.',
+              'policyTitle':'TMGM trading-cost and rebate reference',
+              'policyDesc':'This website is designed to help traders reduce trading costs. The figures below are policy references only; final treatment depends on account type, product, trading records and approval.',
+              'policyNote':'Note: the figures below are for reference only. The gold example uses 1 standard lot of gold. Actual trading costs and rebates vary by product, account type and execution.',
+              'formsDesc':'After submission, the application will be emailed to client support and a reference number will be generated. Never submit passwords, verification codes, card details or identity documents.',
+              'officialSource':'Official TMGM source', 'downloadOfficial':'Official download', 'openOfficial':'Open official platform',
+              'submitting':'Submitting…', 'submitError':'Submission was not completed. A local copy was saved; contact us by email or Telegram. Reference: '
+            },
+            'ms': {
+              'kicker':'KURANGKAN KOS DAGANGAN · REBAT PLATFORM · SOKONGAN INTRODUCING BROKER',
+              'heroTitle':'Bantu pedagang mengurangkan kos dagangan',
+              'heroDesc':'Buka akaun melalui pautan rujukan dan mohon rebat platform untuk membantu mengurangkan kos dagangan. Pengguna baharu juga boleh menghantar permohonan Introducing Broker.',
+              'policyTitle':'Rujukan kos dagangan dan rebat TMGM',
+              'policyDesc':'Laman ini direka untuk membantu pedagang mengurangkan kos dagangan. Angka di bawah ialah rujukan polisi; keputusan akhir bergantung pada jenis akaun, produk, rekod dagangan dan kelulusan.',
+              'policyNote':'Nota: angka di bawah adalah untuk rujukan sahaja. Contoh emas menggunakan 1 lot standard emas. Kos dan rebat sebenar berbeza mengikut produk, jenis akaun dan pelaksanaan.',
+              'formsDesc':'Selepas dihantar, permohonan akan dihantar ke e-mel khidmat pelanggan dan nombor rujukan akan dijana. Jangan hantar kata laluan, kod pengesahan, butiran kad atau dokumen identiti.',
+              'officialSource':'Sumber rasmi TMGM', 'downloadOfficial':'Muat turun rasmi', 'openOfficial':'Buka platform rasmi',
+              'submitting':'Sedang dihantar…', 'submitError':'Permohonan belum berjaya dihantar. Salinan tempatan telah disimpan; hubungi melalui e-mel atau Telegram. Rujukan: '
+            },
+            'th': {
+              'kicker':'ลดต้นทุนการเทรด · คืนค่าธรรมเนียม · บริการ INTRODUCING BROKER',
+              'heroTitle':'ช่วยเทรดเดอร์ลดต้นทุนการเทรด',
+              'heroDesc':'เปิดบัญชีผ่านลิงก์แนะนำและสมัครรับคืนค่าธรรมเนียมเพื่อช่วยลดต้นทุนการเทรด ผู้ใช้ใหม่ยังสามารถส่งใบสมัคร Introducing Broker ได้',
+              'policyTitle':'ข้อมูลอ้างอิงต้นทุนการเทรดและคืนค่าธรรมเนียม TMGM',
+              'policyDesc':'เว็บไซต์นี้มีเป้าหมายเพื่อช่วยเทรดเดอร์ลดต้นทุนการเทรด ตัวเลขด้านล่างเป็นข้อมูลอ้างอิง โดยผลจริงขึ้นอยู่กับประเภทบัญชี ผลิตภัณฑ์ ประวัติการเทรด และการอนุมัติ',
+              'policyNote':'หมายเหตุ: ตัวเลขด้านล่างใช้เพื่อการอ้างอิงเท่านั้น ตัวอย่างทองคำอ้างอิงการเทรดทองคำ 1 ล็อตมาตรฐาน ต้นทุนและเงินคืนจริงอาจแตกต่างกันตามผลิตภัณฑ์ ประเภทบัญชี และการส่งคำสั่ง',
+              'formsDesc':'หลังส่งแบบฟอร์ม ข้อมูลจะถูกส่งไปยังอีเมลฝ่ายบริการและระบบจะสร้างหมายเลขอ้างอิง ห้ามส่งรหัสผ่าน รหัสยืนยัน ข้อมูลบัตร หรือเอกสารยืนยันตัวตน',
+              'officialSource':'แหล่งข้อมูลทางการของ TMGM', 'downloadOfficial':'ดาวน์โหลดทางการ', 'openOfficial':'เปิดแพลตฟอร์มทางการ',
+              'submitting':'กำลังส่ง…', 'submitError':'ยังส่งแบบฟอร์มไม่สำเร็จ ระบบได้บันทึกสำเนาไว้ในอุปกรณ์ โปรดติดต่อทางอีเมลหรือ Telegram หมายเลขอ้างอิง: '
+            }
+          }
+
+          lines = text.splitlines()
+          section = None
+          for i, line in enumerate(lines):
+              if line.strip() == 'const I={': section = 'I'; continue
+              if line.strip() == 'const P={': section = 'P'; continue
+              if section == 'I':
+                  for lang, updates in locale_updates.items():
+                      if line.startswith(f"'{lang}':{{"):
+                          for key, value in updates.items():
+                              escaped = value.replace('\\','\\\\').replace("'", "\\'")
+                              pattern = rf"{re.escape(key)}:'(?:\\'|[^'])*'"
+                              replacement = f"{key}:'{escaped}'"
+                              if re.search(pattern, line):
+                                  line = re.sub(pattern, replacement, line, count=1)
+                              else:
+                                  line = line[:-2] + f",{replacement}" + line[-2:]
+                          lines[i] = line
+                          break
+
+          text = '\n'.join(lines)
+
+          table_lines = {
+            'zh-CN': "'zh-CN':{heads:['账户组别','STD｜标准账户','PM｜高级账户','DC｜比特账户','PRO｜专业账户','RAW07｜ECN裸点账户'],rows:[['黄金','点差32｜返20','点差27｜返15','点差22｜返10','点差22｜返10','点差9｜返2–3.5｜手续费5'],['外汇','点差16｜返10','点差10｜返4','点差13｜返7','点差7｜返2','点差0｜返2｜手续费7'],['比特币','点差14｜返1.5','点差14｜返1.5','点差25｜返10','点差14｜返1.5','点差14｜返1.5'],['推荐人群','Introducing Brokers开展业务','新手交易者','Coins玩家','进阶交易者','高频交易者']]},",
+            'zh-TW': "'zh-TW':{heads:['帳戶組別','STD｜標準帳戶','PM｜高級帳戶','DC｜比特帳戶','PRO｜專業帳戶','RAW07｜ECN裸點帳戶'],rows:[['黃金','點差32｜返20','點差27｜返15','點差22｜返10','點差22｜返10','點差9｜返2–3.5｜手續費5'],['外匯','點差16｜返10','點差10｜返4','點差13｜返7','點差7｜返2','點差0｜返2｜手續費7'],['比特幣','點差14｜返1.5','點差14｜返1.5','點差25｜返10','點差14｜返1.5','點差14｜返1.5'],['推薦人群','Introducing Brokers開展業務','新手交易者','Coins玩家','進階交易者','高頻交易者']]},",
+            'en': "'en':{heads:['Account group','STD｜Standard','PM｜Premium','DC｜Bitcoin','PRO｜Professional','RAW07｜ECN / Raw spread'],rows:[['Gold','Spread 32｜Rebate 20','Spread 27｜Rebate 15','Spread 22｜Rebate 10','Spread 22｜Rebate 10','Spread 9｜Rebate 2–3.5｜Fee 5'],['Forex','Spread 16｜Rebate 10','Spread 10｜Rebate 4','Spread 13｜Rebate 7','Spread 7｜Rebate 2','Spread 0｜Rebate 2｜Fee 7'],['Bitcoin','Spread 14｜Rebate 1.5','Spread 14｜Rebate 1.5','Spread 25｜Rebate 10','Spread 14｜Rebate 1.5','Spread 14｜Rebate 1.5'],['Best fit','Introducing Brokers / business development','Beginner traders','Coin-focused traders','Advanced traders','High-frequency traders']]},",
+            'ms': "'ms':{heads:['Kumpulan akaun','STD｜Standard','PM｜Premium','DC｜Bitcoin','PRO｜Profesional','RAW07｜ECN / spread mentah'],rows:[['Emas','Spread 32｜Rebat 20','Spread 27｜Rebat 15','Spread 22｜Rebat 10','Spread 22｜Rebat 10','Spread 9｜Rebat 2–3.5｜Yuran 5'],['Forex','Spread 16｜Rebat 10','Spread 10｜Rebat 4','Spread 13｜Rebat 7','Spread 7｜Rebat 2','Spread 0｜Rebat 2｜Yuran 7'],['Bitcoin','Spread 14｜Rebat 1.5','Spread 14｜Rebat 1.5','Spread 25｜Rebat 10','Spread 14｜Rebat 1.5','Spread 14｜Rebat 1.5'],['Sesuai untuk','Introducing Brokers / pembangunan perniagaan','Pedagang baharu','Pemain coins','Pedagang lanjutan','Pedagang frekuensi tinggi']]},",
+            'th': "'th':{heads:['กลุ่มบัญชี','STD｜มาตรฐาน','PM｜พรีเมียม','DC｜บิตคอยน์','PRO｜มืออาชีพ','RAW07｜ECN / สเปรดดิบ'],rows:[['ทองคำ','สเปรด 32｜คืน 20','สเปรด 27｜คืน 15','สเปรด 22｜คืน 10','สเปรด 22｜คืน 10','สเปรด 9｜คืน 2–3.5｜ค่าธรรมเนียม 5'],['ฟอเร็กซ์','สเปรด 16｜คืน 10','สเปรด 10｜คืน 4','สเปรด 13｜คืน 7','สเปรด 7｜คืน 2','สเปรด 0｜คืน 2｜ค่าธรรมเนียม 7'],['บิตคอยน์','สเปรด 14｜คืน 1.5','สเปรด 14｜คืน 1.5','สเปรด 25｜คืน 10','สเปรด 14｜คืน 1.5','สเปรด 14｜คืน 1.5'],['เหมาะสำหรับ','Introducing Brokers / พัฒนาธุรกิจ','เทรดเดอร์มือใหม่','สาย Coins','เทรดเดอร์ระดับสูง','เทรดเดอร์ความถี่สูง']]}"
+          }
+          lines = text.splitlines()
+          in_p = False
+          for i, line in enumerate(lines):
+              if line.strip() == 'const P={': in_p = True; continue
+              if in_p:
+                  for lang, new_line in table_lines.items():
+                      if line.startswith(f"'{lang}':{{"):
+                          lines[i] = new_line
+                          break
+                  if line.strip() == '};': in_p = False
+          text = '\n'.join(lines)
+
+          form_js = r"""document.querySelectorAll('form').forEach(f=>f.addEventListener('submit',async e=>{e.preventDefault();const lang=document.documentElement.lang;const t=I[lang]||I.en;const id=f.dataset.kind+'-'+new Date().toISOString().slice(0,10).replaceAll('-','')+'-'+Math.random().toString(36).slice(2,7).toUpperCase();const r=f.querySelector('.result');const button=f.querySelector('button[type=submit]');const oldText=button.textContent;button.disabled=true;button.textContent=t.submitting||oldText;const payload=new FormData(f);payload.append('application_id',id);payload.append('application_type',f.dataset.kind);payload.append('site_language',lang);payload.append('submitted_at',new Date().toISOString());payload.append('_subject','TMGM website application '+id);payload.append('_template','table');payload.append('_captcha','false');const record={id,data:Object.fromEntries(payload),time:new Date().toISOString()};localStorage.setItem('last-'+f.dataset.kind,JSON.stringify(record));try{const response=await fetch('https://formsubmit.co/ajax/freddy.liang@tmgm.com',{method:'POST',body:payload,headers:{Accept:'application/json'}});if(!response.ok)throw new Error('submit failed');r.textContent=t.success+id;f.reset()}catch(error){r.textContent=(t.submitError||t.success)+id}finally{r.style.display='block';button.disabled=false;button.textContent=oldText}}));"""
+          text = re.sub(r"document\.querySelectorAll\('form'\)\.forEach\(f=>f\.addEventListener\('submit',e=>\{.*?\}\)\);", form_js, text, count=1, flags=re.S)
+
+          path.write_text(text + ('\n' if not text.endswith('\n') else ''), encoding='utf-8')
+          PY
+
+      - name: Commit finalized site
+        run: |
+          if git diff --quiet; then
+            echo "No changes detected"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Finalize multilingual rebate site and form delivery"
+          git push
