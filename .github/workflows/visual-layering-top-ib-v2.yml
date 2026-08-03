@@ -2,14 +2,14 @@ name: Retry Top IB visual update
 
 on:
   push:
-    paths:
-      - .github/workflows/visual-layering-top-ib-v2.yml
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   update:
+    if: ${{ !contains(github.event.head_commit.message, 'Add Daily Top IB header') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
