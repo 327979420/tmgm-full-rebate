@@ -85,6 +85,28 @@ body{background:#edf2f8}
 #contact .contact-card:nth-child(3),#contact .contact-card:nth-child(4){border-top:4px solid var(--cyan)}
 .footer{border-top:4px solid var(--cyan)}
 @media(max-width:700px){.ticker-label{min-width:108px;padding:8px 10px}.ticker-label strong{font-size:12px}.ticker-label small{display:none}.ticker-window{padding-left:8px}.ticker-item{font-size:12px;padding:6px 10px}.heading{padding-left:14px}.heading:before{width:4px}}
+
+/* floating-contact-v1 */
+.section.dark .heading h2,#apps .heading h2{color:#fff}
+#apps .heading p{color:#d7e4f8}
+.floating-contact{position:fixed;right:22px;bottom:22px;z-index:90;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.floating-contact-toggle{display:flex;align-items:center;gap:9px;border:0;border-radius:999px;padding:13px 17px;background:linear-gradient(135deg,#16b8d7,#1678d2);color:#fff;font-weight:900;cursor:pointer;box-shadow:0 15px 38px #061a4440;transition:transform .18s ease,box-shadow .18s ease}
+.floating-contact-toggle:hover{transform:translateY(-2px);box-shadow:0 19px 44px #061a4450}
+.floating-contact-icon{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#ffffff22;font-size:16px}
+.floating-contact-panel{width:280px;padding:15px;border:1px solid #d7e1ed;border-radius:18px;background:#fff;box-shadow:0 22px 56px #061a4438;color:var(--text)}
+.floating-contact-panel[hidden]{display:none}
+.floating-contact-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 2px 12px}
+.floating-contact-head strong{font-size:17px;color:var(--navy)}
+.floating-contact-close{border:0;background:#edf3fa;color:var(--navy);width:30px;height:30px;border-radius:50%;font-size:20px;line-height:1;cursor:pointer}
+.floating-contact-links{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.floating-contact-link{display:flex;align-items:center;gap:9px;padding:11px 10px;border:1px solid #dfe7f1;border-radius:12px;background:#f8fbff;font-weight:800;font-size:13px;transition:transform .16s ease,border-color .16s ease,background .16s ease}
+.floating-contact-link:hover{transform:translateY(-1px);border-color:#7bc7db;background:#eefaff}
+.floating-contact-mark{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;background:var(--navy);color:#fff;font-size:12px;font-weight:950}
+.floating-contact-link.wechat .floating-contact-mark{background:#16a65a}
+.floating-contact-link.qq .floating-contact-mark{background:#1678d2}
+.floating-contact-link.discord .floating-contact-mark{background:#5865f2}
+.floating-contact-link.telegram .floating-contact-mark{background:#229ed9}
+@media(max-width:900px){.floating-contact{right:13px;bottom:68px}.floating-contact-panel{width:min(280px,calc(100vw - 26px))}.floating-contact-toggle{padding:12px 15px}}
 </style>
 </head>
 <body>
@@ -111,6 +133,24 @@ body{background:#edf2f8}
 <section class="section white faq" id="faq"><div class="container"><div class="heading"><h2 data-t="faqTitle"></h2><p data-t="faqDesc"></p></div><details><summary data-t="faq1q"></summary><p data-t="faq1a"></p></details><details><summary data-t="faq2q"></summary><p data-t="faq2a"></p></details><details><summary data-t="faq3q"></summary><p data-t="faq3a"></p></details><details><summary data-t="faq4q"></summary><p data-t="faq4a"></p></details><details><summary data-t="faq5q"></summary><p data-t="faq5a"></p></details><details><summary data-t="faq6q"></summary><p data-t="faq6a"></p></details></div></section>
 <section class="section" id="contact"><div class="container"><div class="heading"><h2 data-t="contactTitle"></h2><p data-t="contactDesc"></p></div><div class="contact"><article class="contact-card"><a class="qr-wrap" href="https://qm.qq.com/q/WJBVC3uE8M" target="_blank" rel="noopener"><img src="assets/qq-qr.svg" alt="QQ QR code"></a><h3>QQ</h3><p data-t="scan"></p></article><article class="contact-card"><a class="qr-wrap" href="https://u.wechat.com/kHj45VpIFXCSN5JV-zx8xUc?s=2" target="_blank" rel="noopener"><img src="assets/wechat-qr.svg" alt="WeChat QR code"></a><h3>WeChat</h3><p data-t="scan"></p></article><article class="contact-card"><h3>Discord</h3><p data-t="discordText"></p><a class="btn btn-primary" href="https://discord.gg/x86Zqg7gY" target="_blank" rel="noopener" data-t="join"></a></article><article class="contact-card"><h3>Telegram</h3><p>@LiangFreddy</p><a class="btn btn-primary" href="https://t.me/LiangFreddy" target="_blank" rel="noopener" data-t="telegramBtn"></a></article></div></div></section>
 </main>
+
+<div class="floating-contact" id="floatingContact">
+  <div class="floating-contact-panel" id="floatingContactPanel" hidden>
+    <div class="floating-contact-head">
+      <strong data-t="contactTitle"></strong>
+      <button class="floating-contact-close" id="floatingContactClose" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="floating-contact-links">
+      <a class="floating-contact-link wechat" href="https://u.wechat.com/kHj45VpIFXCSN5JV-zx8xUc?s=2" target="_blank" rel="noopener"><span class="floating-contact-mark">微</span><span>WeChat</span></a>
+      <a class="floating-contact-link qq" href="https://qm.qq.com/q/WJBVC3uE8M" target="_blank" rel="noopener"><span class="floating-contact-mark">QQ</span><span>QQ</span></a>
+      <a class="floating-contact-link discord" href="https://discord.gg/x86Zqg7gY" target="_blank" rel="noopener"><span class="floating-contact-mark">D</span><span>Discord</span></a>
+      <a class="floating-contact-link telegram" href="https://t.me/LiangFreddy" target="_blank" rel="noopener"><span class="floating-contact-mark">T</span><span>Telegram</span></a>
+    </div>
+  </div>
+  <button class="floating-contact-toggle" id="floatingContactToggle" type="button" aria-expanded="false" aria-controls="floatingContactPanel">
+    <span class="floating-contact-icon">✦</span><span data-t="contactTitle"></span>
+  </button>
+</div>
 <footer class="footer"><div class="container"><strong data-t="brand"></strong><p data-t="footerIdentity"></p><p><a href="privacy.html" data-t="privacy"></a></p><p class="risk" data-t="risk"></p></div></footer>
 <div class="mobilebar"><a href="#platforms" data-t="platformsShort"></a><a href="#forms" data-t="applyShort"></a><a href="#contact" data-t="contactShort"></a></div>
 <script>
@@ -136,6 +176,13 @@ document.querySelectorAll('.referral').forEach(a=>a.href=REFERRAL);
 document.getElementById('lang').addEventListener('change',e=>setLang(e.target.value));
 const emailReachableSelect=document.getElementById('emailReachable');const contactInstruction=document.getElementById('contactInstruction');function toggleContactInstruction(){if(!emailReachableSelect||!contactInstruction)return;contactInstruction.hidden=emailReachableSelect.value!=='no'}if(emailReachableSelect){emailReachableSelect.addEventListener('change',toggleContactInstruction);toggleContactInstruction()}
 document.querySelectorAll('form[data-kind="APP"]').forEach(f=>f.addEventListener('submit',async e=>{e.preventDefault();const lang=document.documentElement.lang;const t=I[lang]||I.en;const checked=f.querySelector('input[name="application_type"]:checked');const kind=checked?checked.value:'APP';const id=kind+'-'+new Date().toISOString().slice(0,10).replaceAll('-','')+'-'+Math.random().toString(36).slice(2,7).toUpperCase();const r=f.querySelector('.result');const button=f.querySelector('button[type=submit]');const oldText=button.textContent;button.disabled=true;button.textContent=t.submitting;const data=Object.fromEntries(new FormData(f).entries());data.application_id=id;data.application_type=kind;data.site_language=lang;data.submitted_at=new Date().toISOString();data.email=data.registered_email;data._replyto=data.registered_email;data._subject='Rebate Hub application '+id;data._template='table';data._captcha='false';data._url=window.location.href;const record={id,data,time:new Date().toISOString()};localStorage.setItem('last-'+kind,JSON.stringify(record));try{const response=await fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(data)});const result=await response.json().catch(()=>({}));localStorage.setItem('last-submit-response',JSON.stringify({status:response.status,result,time:new Date().toISOString()}));if(!response.ok||result.success===false)throw new Error(result.message||'submit failed');sessionStorage.setItem('lastApplication',JSON.stringify({id:id,type:kind,lang:lang}));window.location.href='success.html?ref='+encodeURIComponent(id)+'&type='+encodeURIComponent(kind)+'&lang='+encodeURIComponent(lang)}catch(error){console.error(error);r.textContent=t.submitError+id;r.style.display='block';button.disabled=false;button.textContent=oldText}}));
+
+const floatingContact=document.getElementById('floatingContact');
+const floatingContactToggle=document.getElementById('floatingContactToggle');
+const floatingContactPanel=document.getElementById('floatingContactPanel');
+const floatingContactClose=document.getElementById('floatingContactClose');
+function setFloatingContact(open){if(!floatingContactPanel||!floatingContactToggle)return;floatingContactPanel.hidden=!open;floatingContactToggle.setAttribute('aria-expanded',String(open))}
+if(floatingContact&&floatingContactToggle&&floatingContactPanel){floatingContactToggle.addEventListener('click',()=>setFloatingContact(floatingContactPanel.hidden));if(floatingContactClose)floatingContactClose.addEventListener('click',()=>setFloatingContact(false));document.addEventListener('click',event=>{if(!floatingContact.contains(event.target))setFloatingContact(false)});document.addEventListener('keydown',event=>{if(event.key==='Escape')setFloatingContact(false)})}
 const saved=localStorage.getItem('tmgm-lang');const browser=(navigator.language||'en').toLowerCase();const initial=saved||(browser.startsWith('zh-tw')||browser.startsWith('zh-hk')?'zh-TW':browser.startsWith('zh')?'zh-CN':browser.startsWith('ms')?'ms':browser.startsWith('th')?'th':'en');setLang(initial);
 </script>
 </body>
