@@ -27,7 +27,6 @@ jobs:
             "heroTitle:'多平台满返，一个入口'": "heroTitle:'交易返佣与IB合作'",
             "heroDesc:'选平台，提交申请，开启返佣或代理权限。'": "heroDesc:'提交申请，开启返佣或IB权限。'",
             "settleText:'合资格返佣通常在下一处理日进入指定账户。'": "settleText:'订单平仓后1个工作日到账。'",
-            "existingText:'注册超过3天，可提交人工审核。'": "existingText:'注册超过3天，可提交人工审核。'",
 
             "heroTitle:'多平台滿返，一個入口'": "heroTitle:'交易返佣與IB合作'",
             "heroDesc:'選平台、提交申請，開啟返佣或代理權限。'": "heroDesc:'提交申請，開啟返佣或IB權限。'",
@@ -46,13 +45,11 @@ jobs:
             "heroTitle:'ศูนย์เดียวสำหรับรีเบตและพาร์ทเนอร์ IB'": "heroTitle:'รีเบตการเทรดและความร่วมมือ IB'",
             "heroDesc:'เลือกแพลตฟอร์ม ส่งข้อมูล และเปิดสิทธิ์รีเบตหรือ IB'": "heroDesc:'สมัครเพื่อเปิดสิทธิ์รีเบตหรือ IB'",
             "settleText:'รีเบตที่มีคุณสมบัติมักเข้าบัญชีในวันประมวลผลถัดไป'": "settleText:'เข้าบัญชีภายใน 1 วันทำการหลังปิดออเดอร์'",
-            "existingText:'บัญชีที่เปิดเกิน 3 วันสามารถส่งให้เจ้าหน้าที่ตรวจสอบได้'": "existingText:'บัญชีที่เปิดเกิน 3 วันสามารถส่งให้เจ้าหน้าที่ตรวจสอบได้'",
           }
 
           for old, new in replacements.items():
               text = text.replace(old, new)
 
-          # Remove the opening “How to apply” card completely.
           text, removed = re.subn(
               r'<aside class="hero-card"><h2 data-t="quickTitle"></h2><ol>.*?</aside>',
               '',
