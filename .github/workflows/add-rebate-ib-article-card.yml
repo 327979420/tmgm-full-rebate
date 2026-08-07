@@ -32,11 +32,12 @@ jobs:
             "knowledgeDesc:'เรียนรู้เกี่ยวกับรีเบต TMGM รีเบตเต็ม ลิงก์เปิดบัญชี ประเภทบัญชี และต้นทุนการเทรดด้วยข้อมูลที่ชัดเจนและตรวจสอบได้',": "knowledgeDesc:'เรียนรู้เกี่ยวกับรีเบต TMGM รีเบตเต็ม ลิงก์เปิดบัญชี ประเภทบัญชี และต้นทุนการเทรดด้วยข้อมูลที่ชัดเจนและตรวจสอบได้',k0tag:'IB & รีเบต',k0t:'รีเบตคืออะไร? ความสัมพันธ์ระหว่าง IB รีเบต Forex และรีเบตเต็ม',k0d:'ทำความเข้าใจว่าโบรกเกอร์ Introducing Broker และรีเบตของลูกค้าเชื่อมโยงกันอย่างไร และเหตุใดรีเบตจริงต่อล็อตจึงสำคัญ',",
           }
           for needle,repl in inserts.items():
-            if 'k0tag:' in s[s.find(needle)-20:s.find(needle)+500] if needle in s else False:
-              continue
-            if needle not in s:
-              raise SystemExit('translation insertion marker not found: '+needle[:40])
-            s=s.replace(needle,repl,1)
+            if needle in s and 'k0tag:' not in s[s.find(needle):s.find(needle)+700]:
+              s=s.replace(needle,repl,1)
+
+          s=s.replace('<p>通过正确入口完成注册，并在交易前确认账户归属与返佣关系。</p>','<p data-t="k3d"></p>')
+          s=s.replace('<h3>已有TMGM账户如何查询返佣资格？</h3>','<h3 data-t="k4t"></h3>')
+          s=s.replace('<p>老账户不要重复注册，先了解代理归属、转组和人工审核的处理方式。</p>','<p data-t="k4d"></p>')
 
           link_script='''\n<script>\n(function(){\n  const sel=document.getElementById('lang');\n  const link=document.getElementById('rebateIbArticle');\n  if(!link) return;\n  function syncRebateArticleLink(){\n    link.href=(sel && sel.value==='zh-CN')?'rebate-ib-guide.html':'rebate-ib-guide-en.html';\n  }\n  syncRebateArticleLink();\n  if(sel) sel.addEventListener('change',syncRebateArticleLink);\n})();\n</script>\n'''
           if 'syncRebateArticleLink' not in s:
