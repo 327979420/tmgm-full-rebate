@@ -1,0 +1,54 @@
+name: Add IB rebate article card
+on:
+  push:
+    paths:
+      - '.github/workflows/add-rebate-ib-article-card.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add bilingual article card to homepage
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+
+          marker='<section class="section white" id="articles"><div class="container"><div class="heading"><h2 data-t="knowledgeTitle"></h2><p data-t="knowledgeDesc"></p></div><div class="knowledge-grid">\n'
+          card='<a class="knowledge-card" id="rebateIbArticle" href="rebate-ib-guide.html"><span class="knowledge-tag" data-t="k0tag"></span><h3 data-t="k0t"></h3><p data-t="k0d"></p><span class="read-more" data-t="readArticle"></span></a>\n'
+          if 'id="rebateIbArticle"' not in s:
+            if marker not in s:
+              raise SystemExit('knowledge section marker not found')
+            s=s.replace(marker, marker+card, 1)
+
+          inserts={
+            "knowledgeDesc:'了解TMGM返佣、满返、开户链接、账户类型与交易成本。持续更新真实、可计算、可核对的返佣知识。',": "knowledgeDesc:'了解TMGM返佣、满返、开户链接、账户类型与交易成本。持续更新真实、可计算、可核对的返佣知识。',k0tag:'IB与返佣',k0t:'返佣是什么？IB、外汇返佣和满返的关系',k0d:'从券商佣金、Introducing Broker到客户返佣，一篇看懂返佣从哪里来，以及为什么每手实际返佣会影响长期交易成本。',",
+            "knowledgeDesc:'了解TMGM返佣、滿返、開戶連結、帳戶類型與交易成本。持續更新真實、可計算、可核對的返佣知識。',": "knowledgeDesc:'了解TMGM返佣、滿返、開戶連結、帳戶類型與交易成本。持續更新真實、可計算、可核對的返佣知識。',k0tag:'IB與返佣',k0t:'返佣是什麼？IB、外匯返佣和滿返的關係',k0d:'從券商佣金、Introducing Broker到客戶返佣，一篇看懂返佣從哪裡來，以及每手實際返佣如何影響長期交易成本。',",
+            "knowledgeDesc:'Learn about TMGM rebates, full rebates, account-opening links, account types and trading costs with clear and verifiable explanations.',": "knowledgeDesc:'Learn about TMGM rebates, full rebates, account-opening links, account types and trading costs with clear and verifiable explanations.',k0tag:'IB & Rebates',k0t:'What is a trading rebate? IBs, forex rebates and full rebates',k0d:'See how broker commissions, Introducing Brokers and client rebates connect, and why the actual rebate per lot matters over time.',",
+            "knowledgeDesc:'Ketahui tentang rebat TMGM, rebat penuh, pautan pembukaan akaun, jenis akaun dan kos dagangan dengan penerangan yang jelas dan boleh disemak.',": "knowledgeDesc:'Ketahui tentang rebat TMGM, rebat penuh, pautan pembukaan akaun, jenis akaun dan kos dagangan dengan penerangan yang jelas dan boleh disemak.',k0tag:'IB & Rebat',k0t:'Apakah rebat dagangan? Hubungan IB, rebat forex dan rebat penuh',k0d:'Fahami bagaimana komisen broker, Introducing Broker dan rebat pelanggan saling berkaitan serta mengapa rebat sebenar setiap lot penting.',",
+            "knowledgeDesc:'เรียนรู้เกี่ยวกับรีเบต TMGM รีเบตเต็ม ลิงก์เปิดบัญชี ประเภทบัญชี และต้นทุนการเทรดด้วยข้อมูลที่ชัดเจนและตรวจสอบได้',": "knowledgeDesc:'เรียนรู้เกี่ยวกับรีเบต TMGM รีเบตเต็ม ลิงก์เปิดบัญชี ประเภทบัญชี และต้นทุนการเทรดด้วยข้อมูลที่ชัดเจนและตรวจสอบได้',k0tag:'IB & รีเบต',k0t:'รีเบตคืออะไร? ความสัมพันธ์ระหว่าง IB รีเบต Forex และรีเบตเต็ม',k0d:'ทำความเข้าใจว่าโบรกเกอร์ Introducing Broker และรีเบตของลูกค้าเชื่อมโยงกันอย่างไร และเหตุใดรีเบตจริงต่อล็อตจึงสำคัญ',",
+          }
+          for needle,repl in inserts.items():
+            if 'k0tag:' in s[s.find(needle)-20:s.find(needle)+500] if needle in s else False:
+              continue
+            if needle not in s:
+              raise SystemExit('translation insertion marker not found: '+needle[:40])
+            s=s.replace(needle,repl,1)
+
+          link_script='''\n<script>\n(function(){\n  const sel=document.getElementById('lang');\n  const link=document.getElementById('rebateIbArticle');\n  if(!link) return;\n  function syncRebateArticleLink(){\n    link.href=(sel && sel.value==='zh-CN')?'rebate-ib-guide.html':'rebate-ib-guide-en.html';\n  }\n  syncRebateArticleLink();\n  if(sel) sel.addEventListener('change',syncRebateArticleLink);\n})();\n</script>\n'''
+          if 'syncRebateArticleLink' not in s:
+            s=s.replace('</body>',link_script+'</body>',1)
+
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Add bilingual IB rebate article to knowledge section"
+          git push
