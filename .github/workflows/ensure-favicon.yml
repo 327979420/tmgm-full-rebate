@@ -1,0 +1,42 @@
+name: Ensure favicon metadata
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-homepage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Add favicon metadata when missing
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          favicon = '<link rel="icon" type="image/svg+xml" href="/favicon.svg">\n<link rel="shortcut icon" href="/favicon.svg">'
+          if 'href="/favicon.svg"' not in s:
+              marker = '<link rel="canonical" href="https://max-rebate.com/">'
+              s = s.replace(marker, marker + '\n' + favicon, 1)
+          org = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Max Rebate 满返网","url":"https://max-rebate.com/","logo":"https://max-rebate.com/favicon.svg"}</script>'
+          if '"@type":"Organization"' not in s:
+              marker = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Max Rebate 满返网","url":"https://max-rebate.com/"}</script>'
+              s = s.replace(marker, marker + '\n' + org, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit homepage metadata
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Add favicon metadata to homepage"
+          git push origin main
