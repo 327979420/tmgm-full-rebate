@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Max Rebate MR logo">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#18c8df"/>
+      <stop offset="1" stop-color="#1678d2"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#061a44"/>
+  <rect x="48" y="48" width="416" height="416" rx="92" fill="url(#g)"/>
+  <g fill="#fff" transform="skewX(-7)">
+    <path d="M116 344V166h46l52 75 52-75h46v178h-48V239l-50 70-50-70v105z"/>
+    <path d="M330 166h72c55 0 85 25 85 67 0 29-14 49-40 59l51 52h-61l-42-45h-17v45h-48zm48 43v49h22c25 0 38-8 38-25 0-16-13-24-38-24z" transform="translate(-24 0)"/>
+  </g>
+</svg>
