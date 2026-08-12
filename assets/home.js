@@ -115,12 +115,12 @@
     const style=document.createElement('style');
     style.textContent=`
       @media (min-width:1280px){
-        .container{width:min(1480px,94vw)!important}
-        .hero-grid{gap:48px!important;grid-template-columns:minmax(0,1.05fr) minmax(430px,.95fr)!important}
-        .rebate-shell{padding:28px 32px!important}
-        .calc-layout{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)!important;gap:24px!important}
+        .container{width:min(1240px,90vw)!important}
+        .hero-grid{gap:40px!important;grid-template-columns:minmax(0,1.05fr) minmax(390px,.95fr)!important}
+        .rebate-shell{padding:28px 30px!important}
+        .calc-layout{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)!important;gap:22px!important}
       }
-      @media (min-width:1700px){.container{width:min(1580px,92vw)!important}}
+      @media (min-width:1700px){.container{width:min(1240px,86vw)!important}}
       .rebate-table tbody td,.rebate-table tbody th{position:relative;isolation:isolate;transition:box-shadow .16s ease,filter .16s ease;background-clip:padding-box}
       .rebate-table tbody td::after,.rebate-table tbody th::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .14s ease;background:radial-gradient(circle 115px at var(--mx,50%) var(--my,50%),rgba(64,224,246,.38) 0%,rgba(22,184,215,.17) 34%,rgba(22,184,215,0) 72%)}
       .rebate-table tbody td:hover::after,.rebate-table tbody th:hover::after{opacity:1}
