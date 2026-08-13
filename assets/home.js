@@ -75,27 +75,34 @@
   };
 
   Object.assign(EN, {
-    heroDesc:'Max Rebate returns 100% of the rebate we receive to clients. No extra deduction and no added spread markup.'
+    heroTitle:'Lower costs for traders.\nEarn rebates as a partner.',
+    missionText:'Lower trading costs.', taskText:'Return eligible rebates.', serviceText:'Apply, verify, follow up.'
   });
   Object.assign(ZH, {
     heroDesc:'',
+    heroTitle:'交易者降低成本，\n代理团队赚取返佣',
     metricHighlight:'全网最高返佣',
     why0t:'全网最高返佣',
     rebateDesc:'很多新手不仅承担较高的点差成本，例如黄金每手点差可能达到 30–80 美元，还没有应有的返佣，这部分成本会形成很大的长期损耗。',
-    flow5d:'可从平台交易账户按需要出金，支持银行卡及主流加密渠道。'
+    missionText:'降低交易成本。', taskText:'返还合资格返佣。', serviceText:'申请、核对、跟进。',
+    howDesc:'开户、交易、返佣、出金。',
+    flow1d:'开户并完成验证。', flow2d:'提交返佣申请。', flow3d:'审核后正常交易。', flow4d:'返佣进入交易账户。', flow5d:'支持银行卡及主流加密渠道出金。',
+    platformDesc:'查看平台与返佣方案。', calcDesc:'选择账户和手数，估算黄金返佣。', faqDesc:'常见问题。', contactDesc:'返佣、账户或代理合作咨询。'
   });
   Object.assign(ZHT, {
     heroDesc:'',
+    heroTitle:'交易者降低成本，\n代理團隊賺取返佣',
     metricHighlight:'全網最高返佣',
     why0t:'全網最高返佣',
     rebateDesc:'很多新手不僅承擔較高的點差成本，例如黃金每手點差可能達到 30–80 美元，還沒有應有的返佣，這部分成本會形成很大的長期損耗。',
-    flow5d:'可從平台交易帳戶按需要出金，支援銀行卡及主流加密渠道。'
+    missionText:'降低交易成本。', taskText:'返還合資格返佣。', serviceText:'申請、核對、跟進。',
+    howDesc:'開戶、交易、返佣、出金。', flow1d:'開戶並完成驗證。', flow2d:'提交返佣申請。', flow3d:'審核後正常交易。', flow4d:'返佣進入交易帳戶。', flow5d:'支援銀行卡及主流加密渠道出金。'
   });
   Object.assign(MS, {
-    heroDesc:'Max Rebate mengembalikan 100% rebat yang kami terima kepada pelanggan. Tiada potongan tambahan dan tiada markup spread tambahan.'
+    heroTitle:'Kurangkan kos pedagang.\nEjen memperoleh rebat.', heroDesc:''
   });
   Object.assign(TH, {
-    heroDesc:'Max Rebate คืนรีเบตที่เราได้รับให้ลูกค้า 100% โดยไม่มีการหักเพิ่มและไม่มีการเพิ่มสเปรด'
+    heroTitle:'ลดต้นทุนให้เทรดเดอร์\nตัวแทนรับรายได้รีเบต', heroDesc:''
   });
 
   const T = {'zh-CN':ZH,'zh-TW':ZHT,en:EN,ms:MS,th:TH};
