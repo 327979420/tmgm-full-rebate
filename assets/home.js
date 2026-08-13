@@ -78,12 +78,16 @@
     heroDesc:'Max Rebate returns 100% of the rebate we receive to clients. No extra deduction and no added spread markup.'
   });
   Object.assign(ZH, {
-    heroDesc:'满返网收到的返佣 100% 返还给客户。不额外克扣，不额外加点差。',
-    why0t:'全网最高返佣'
+    heroDesc:'',
+    metricHighlight:'全网最高返佣',
+    why0t:'全网最高返佣',
+    rebateDesc:'返佣，就是从交易平台收取的点差或手续费中，额外返还给客户的一部分资金。它能直接抵减交易支出、降低交易成本，却很容易被忽略。很多新手不仅承担较高的点差成本——例如黄金每手点差可能达到 30–80 美元——还没有享受到应有的返佣。交易次数和手数累积后，这部分成本会形成很大的长期损耗。'
   });
   Object.assign(ZHT, {
-    heroDesc:'滿返網收到的返佣 100% 返還給客戶。不額外克扣，不額外加點差。',
-    why0t:'全網最高返佣'
+    heroDesc:'',
+    metricHighlight:'全網最高返佣',
+    why0t:'全網最高返佣',
+    rebateDesc:'返佣，就是從交易平台收取的點差或手續費中，額外返還給客戶的一部分資金。它能直接抵減交易支出、降低交易成本，卻很容易被忽略。很多新手不僅承擔較高的點差成本——例如黃金每手點差可能達到 30–80 美元——還沒有享受到應有的返佣。交易次數和手數累積後，這部分成本會形成很大的長期損耗。'
   });
   Object.assign(MS, {
     heroDesc:'Max Rebate mengembalikan 100% rebat yang kami terima kepada pelanggan. Tiada potongan tambahan dan tiada markup spread tambahan.'
