@@ -74,6 +74,24 @@
     brandSub:'TRADING CASHBACK', apply:'สมัคร', navRebate:'รีเบต TMGM', navAgent:'พาร์ทเนอร์ TMGM', navRates:'อัตรารีเบต', navCalc:'คำนวณรีเบต', navContact:'ติดต่อเรา', tickerTitle:'Top IB รายวัน', tickerNote:'ประวัติรีเบต', heroKicker:'TMGM REBATE · INDEPENDENT SERVICE', heroTitle:'รีเบต TMGM\nลดต้นทุนในทุกล็อต', heroDesc:'Max Rebate ให้บริการรีเบต TMGM อย่างโปร่งใส และคืนส่วนรีเบตของลูกค้าที่มีสิทธิ์ซึ่งเราได้รับ 100% โดยไม่มีการหักเพิ่มหรือเพิ่มสเปรด', viewRates:'ดูแผนรีเบต TMGM', applyNow:'สมัครเป็นลูกค้า / ตัวแทน', metricHighlight:'Highest rebate online', rebateTitle:'รีเบตคืออะไร?', rebateDesc:'ต้นทุนการเทรดส่วนหนึ่งที่โบรกเกอร์เรียกเก็บอาจจ่ายคืนเป็นค่าคอมมิชชัน ส่วนนี้สามารถคืนให้เทรดเดอร์หรือ IB ที่พัฒนาและดูแลลูกค้า โดยไม่ควรถูกคนกลางหักเพิ่ม', story1t:'เกิดต้นทุนการเทรด', story1d:'เทรดด้วยบัญชีและเงื่อนไขปกติของแพลตฟอร์ม', story2t:'เกิดค่าคอมมิชชันที่คืนได้', story2d:'คำนวณตามกลุ่มบัญชีและปริมาณเทรดที่มีสิทธิ์', story3t:'คืนแก่ผู้มีสิทธิ์', story3d:'คืนส่วนที่มีสิทธิ์ให้ลูกค้าหรือ IB โดยไม่มีการหักจากคนกลาง', howTitle:'รีเบตทำงานอย่างไร', howDesc:'ตั้งแต่เปิดบัญชีจนถึงถอนเงิน มีทั้งหมด 5 ขั้นตอน', flow1t:'เปิดและยืนยันบัญชี', flow1d:'เปิดบัญชีแพลตฟอร์มใหม่และยืนยันตัวตนให้เสร็จ', flow2t:'สมัครสิทธิ์รีเบต', flow2d:'ส่งคำขอสิทธิ์รีเบตผ่าน Max Rebate', flow3t:'เทรดตามปกติ', flow3d:'หลังได้รับอนุมัติ ให้เทรดตามปกติ', flow4t:'รีเบตเข้าบัญชีอัตโนมัติ', flow4d:'รีเบตที่มีสิทธิ์จะเข้าบัญชีเทรดของแพลตฟอร์มโดยอัตโนมัติ', flow5t:'ถอนผ่านช่องทางที่ต้องการ', flow5d:'ใช้วิธีที่แพลตฟอร์มรองรับ เช่น บัตรธนาคารหรือช่องทางคริปโต ทั้งนี้ขึ้นอยู่กับแพลตฟอร์มและภูมิภาค', faq2a:'หลังจากเราได้รับรีเบตจากโบรกเกอร์ เราจะคืนส่วนรีเบตที่ลูกค้ามีสิทธิ์ได้รับ 100% ส่วนสเปรดเป็นต้นทุนการเทรดคงที่และไม่สามารถคืนได้', faq4a:'โดยปกติใช้เวลา 1 วันทำการ เช่น ปิดรายการวันจันทร์ รีเบตสามารถเข้าวันอังคารได้ กรณีพิเศษอาจใช้เวลานานกว่า', faq7q:'ตัวแทนได้รับสิทธิ์อะไรบ้าง?', faq7a:'เมื่อเปิดสิทธิ์ตัวแทนแล้ว จะได้รับลิงก์เปิดบัญชีและรหัสเชิญเฉพาะ รายได้ตัวแทนขึ้นอยู่กับประเภทบัญชี สินค้าที่เทรด และปริมาณที่มีสิทธิ์ ไม่ขึ้นอยู่กับกำไรหรือขาดทุนของบัญชีลูกค้า'
   };
 
+  Object.assign(EN, {
+    heroDesc:'Max Rebate returns 100% of the rebate we receive to clients. No extra deduction and no added spread markup.'
+  });
+  Object.assign(ZH, {
+    heroDesc:'满返网收到的返佣 100% 返还给客户。不额外克扣，不额外加点差。',
+    why0t:'全网最高返佣'
+  });
+  Object.assign(ZHT, {
+    heroDesc:'滿返網收到的返佣 100% 返還給客戶。不額外克扣，不額外加點差。',
+    why0t:'全網最高返佣'
+  });
+  Object.assign(MS, {
+    heroDesc:'Max Rebate mengembalikan 100% rebat yang kami terima kepada pelanggan. Tiada potongan tambahan dan tiada markup spread tambahan.'
+  });
+  Object.assign(TH, {
+    heroDesc:'Max Rebate คืนรีเบตที่เราได้รับให้ลูกค้า 100% โดยไม่มีการหักเพิ่มและไม่มีการเพิ่มสเปรด'
+  });
+
   const T = {'zh-CN':ZH,'zh-TW':ZHT,en:EN,ms:MS,th:TH};
   const accountData = {STD:{min:20,max:20,fee:null},PM:{min:15,max:15,fee:null},DC:{min:10,max:10,fee:null},PRO:{min:10,max:10,fee:null},RAW07:{min:2,max:3.5,fee:5}};
   let currentLang='en';
