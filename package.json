@@ -1,0 +1,7 @@
+{
+  "name": "tmgm-full-rebate",
+  "private": true,
+  "scripts": {
+    "check": "node scripts/validate-site.mjs"
+  }
+}

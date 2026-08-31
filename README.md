@@ -1,119 +1,79 @@
-# TMGM满返网 / TMGM Full Rebate Hub
+# Max Rebate / 满返网
 
-A static, multilingual TMGM referral, rebate and agent-application website built with plain HTML, CSS and JavaScript.
+A static multilingual referral, rebate and IB application website for `max-rebate.com`.
 
-## Included
+## Architecture
 
-- Five language routes: English, Simplified Chinese, Traditional Chinese, Bahasa Melayu and Thai
-- Browser-language redirect from the root URL
-- TMGM referral registration link
-- Rebate policy table for STD, PM, DC, PRO and RAW07
-- Separate rebate and agent application forms
-- Application IDs (`REB-...` and `IB-...`)
-- QQ and WeChat QR codes supplied by the site owner
-- Discord invite link
-- Official TMGM download links for Windows, macOS, iOS, Android and WebTrader
-- Four tutorial pages: referral registration, downloads, rebate application and agent-page setup
-- Privacy notice and CFD risk disclaimer
-- Google Apps Script / Google Sheets form receiver
-- Mobile-responsive layout with no build step and no external font dependency
+- HTML files contain page structure and default Simplified Chinese content.
+- `assets/css/home.css` contains the original home-page styles.
+- `assets/css/application.css` and `assets/css/success.css` contain the application-flow styles.
+- `assets/home-enhancements.css` contains newer layout and interaction styles.
+- `assets/site-config.js` is the single source for referral URLs, contact URLs and calculator rates.
+- `assets/site-links.js` applies those shared destinations wherever a page needs them.
+- `assets/home-i18n.js` is the complete home-page translation table.
+- `assets/home.js` only binds language, calculator and pointer behavior.
+- `assets/application.js` and `assets/success.js` contain the application-flow behavior.
+- `scripts/validate-site.mjs` checks structural, resource, sitemap and translation integrity.
 
-## Site structure
+There is no build step and no runtime dependency.
+
+## Important files
 
 ```text
 .
 ├── index.html
-├── en/
-├── zh-cn/
-├── zh-tw/
-├── ms/
-├── th/
+├── apply.html
+├── success.html
+├── tmgm-*.html
+├── tutorial-*.html
 ├── assets/
-│   ├── css/styles.css
-│   ├── js/config.js
-│   ├── js/i18n.js
-│   ├── js/site.js
-│   └── images/
-├── google-apps-script.gs
-└── README.md
+│   ├── css/home.css
+│   ├── css/application.css
+│   ├── css/success.css
+│   ├── home-enhancements.css
+│   ├── site-config.js
+│   ├── site-links.js
+│   ├── home-i18n.js
+│   ├── home.js
+│   ├── application.js
+│   ├── success.js
+│   ├── trust.css
+│   └── trust-pages.js
+├── scripts/validate-site.mjs
+├── sitemap.xml
+└── robots.txt
 ```
 
-## 1. Update links and settings
+## Editing rules
 
-Edit `assets/js/config.js`.
+1. Change referral links, contact destinations and calculator rates only in `assets/site-config.js`.
+2. Change home-page translations only in `assets/home-i18n.js`.
+3. Keep page structure in HTML and presentation in CSS. Do not inject layout CSS or static sections from JavaScript.
+4. Add every public content page to `sitemap.xml`.
+5. Run validation before committing.
 
-Important fields:
+## Validation
 
-```js
-referralUrl: "your TMGM referral link",
-discordUrl: "your Discord invite",
-formProvider: "demo",
-formEndpoint: ""
+```bash
+npm run check
 ```
 
-The current project already includes the referral URL and Discord URL supplied in the project notes.
+The validator checks headings, metadata, duplicate IDs, local resources, external-link safety, sitemap coverage, translation completeness, core-page separation and centralized configuration.
 
-## 2. Connect Google Sheets
-
-1. Create a Google Sheet.
-2. Open `Extensions -> Apps Script`.
-3. Replace the default code with `google-apps-script.gs`.
-4. In `Project Settings -> Script properties`, add:
-   - `SHEET_ID`: the ID between `/d/` and `/edit` in the Google Sheet URL
-   - `SHEET_NAME`: optional, default `Applications`
-   - `NOTIFY_EMAIL`: optional email notification recipient
-5. Deploy as a Web App.
-6. Allow the web app to receive submissions from website visitors, subject to your organisation's policy.
-7. Copy the deployment URL into `assets/js/config.js`:
-
-```js
-formProvider: "google-apps-script",
-formEndpoint: "https://script.google.com/macros/s/.../exec"
-```
-
-Until this is configured, forms operate in demo mode and save test submissions only in the visitor's browser local storage.
-
-## 3. Local preview
+## Local preview
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Open:
+Open `http://localhost:8000/`.
 
-```text
-http://localhost:8000/zh-cn/
-```
+## Deployment checklist
 
-## 4. GitHub Pages deployment
+1. Run `npm run check`.
+2. Preview the home page and application flow.
+3. Test all five languages.
+4. Verify the calculator, referral link and contact destinations.
+5. Confirm current rates and compliance language with the platform owner.
 
-1. Create a repository, for example `tmgm-full-rebate`.
-2. Upload all files with `index.html` at the repository root.
-3. Open `Settings -> Pages`.
-4. Select `Deploy from a branch`.
-5. Select `main` and `/ (root)`.
-
-A custom domain can be connected later through GitHub Pages settings and your DNS provider.
-
-## 5. Before public launch
-
-- Replace demo form mode with a working receiver.
-- Test the referral URL and confirm account attribution.
-- Confirm the rebate table, units, fees, settlement language and eligibility with TMGM compliance or management.
-- Confirm permission to use TMGM branding and the supplied logo.
-- Verify that the QQ and WeChat QR codes are current.
-- Review Malay and Thai financial terminology with a fluent human reviewer.
-- Test the website on iPhone Safari, Android Chrome, WeChat's in-app browser and desktop browsers.
-- Do not collect trading passwords, verification codes, bank-card details or identity-document images.
-
-## Source notes used for this version
-
-- Site name: TMGM满返网
-- TMGM colour direction
-- New-account three-day rule and existing-account review path
-- Spread/rebate policy table
-- Next-day-after-close processing description
-- Referral URL
-- QQ and WeChat QR images
-- Discord invitation
-- Agent-application and Portal-agreement workflow
+Never collect trading passwords, verification codes, bank-card credentials or identity-document images.
